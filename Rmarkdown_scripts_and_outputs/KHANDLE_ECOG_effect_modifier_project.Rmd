@@ -1,0 +1,1010 @@
+---
+title: "Khande_results_Sept10_2019"
+output:  
+  bookdown::html_document2:
+   fig_caption: TRUE
+   table_caption: TRUE
+   theme: yeti
+   toc: TRUE
+   toc_float:
+    collapsed: TRUE
+   toc_depth: 2
+header-includes:
+ - \usepackage{floatrow}
+ - \floatsetup[figure]{capposition=top}
+---
+
+
+```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F}
+require(ggplot2)
+require(reshape2)
+require(knitr)
+require(kableExtra)
+source("/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Khande_data_engineering.R")
+```
+
+
+```{r setup, echo=FALSE,include=FALSE}
+knitr::opts_chunk$set(echo = F, cache = FALSE, warning=FALSE, message=FALSE)
+```
+
+ 
+
+# List of authors: 
+Fabian W. Corlier (first), Daniel Mungas, Sarah Farias, Maria Glymour, Rachel Whitmer, (open to adding additional co-authors), Elizabeth Rose Mayeda (last)
+
+# Background/rationale: 
+Subjective cognitive decline predicts incidence of mild cognitive impairment and dementia among older adults without cognitive impairment [(Mitchell *et al*., 2014)](https://gala.gre.ac.uk/id/eprint/12228/1/12228_STUBBS_SMC_to_dementia_draft_Acta_resubmission_July_23_GALA_(AAM)_(2014_In_Press).pdf), suggesting self-reported cognitive decline may be a sensitive measure of cognitive change. However, most of this research has been conducted among highly educated non-Latino white participants recruited from memory clinics, and little is known about social factors that modify the correspondence between objectively measured cognitive function and subjective cognitive decline. Prior work has shown that anxiety and depressive symptoms influence the correspondence between objectively measured cognitive function and subjective cognitive decline such that people with higher levels of anxiety or depressive symptoms are more likely to report subjective cognitive decline for the same level of objectively measured cognitive function [(Hanninen *et al*. 1991; ](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1532-5415.1994.tb06064.x) [Schmand *et al*. 1997; ](https://www.cambridge.org/core/product/identifier/S0007125000148287/type/journal_article) [Reid *et al*. 2006,](https://www.karger.com/Article/Pdf/96295) reviewed in [Jonker *et al*. 2000)](http://doi.wiley.com/10.1002/1099-1166%28200011%2915%3A11%3C983%3A%3AAID-GPS238%3E3.0.CO%3B2-5). However, to our knowledge, no prior work has evaluated whether social factors modify the link between objectively measured cognitive function and subjective cognitive decline. For example, people with a family history of dementia may be more aware or concerned about subtle changes in cognitive function, which may result in people with a family history of dementia to report more subjective cognitive decline for at a given level of objectively measured cognitive function. 
+
+# Research Question: 
+Does the correspondence between objectively measured of cognitive function (SENAS) and self-reported decline in cognitively-related functional ability  (ECog) differ by race/ethnicity, gender, educational attainment, family history of dementia, and depressive symptoms(?) in a diverse sample of older adults without diagnosis of dementia?
+
+# Hypotheses:
+
+  * **H1:** Race/ethnicity will modify the association between objectively measured cognitive function and subjective cognitive decline. Our motivation is that cultural factors may contribute to different associations between objectively measured cognitive function and subjective cognitive decline, but because we are not aware of any prior work in this area, we do not have a specific hypothesized direction. 
+  * **H2:** Gender will modify the association between objectively measured cognitive function and self-reported cognitive function such that for a given level of objectively measured cognitive function, women will report more subjective cognitive decline.  
+  * **H3:** Educational attainment will modify the association between objectively measured cognitive function and self-reported cognitive function such that for a given level of objectively measured cognitive function, people with higher education attainment will report more subjective cognitive decline.  
+  * **H4:** Family history of dementia will modify the association between objectively measured cognitive function and self-reported cognitive function such that for a given level of objectively measured cognitive function, people with a family history of dementia will report more subjective cognitive decline.  
+  * **H5:** Elevated depressive symptoms will modify the association between objectively measured cognitive function and self-reported cognitive function such that for a given level of objectively measured cognitive function, people with elevated depressive symptoms will report more subjective cognitive decline. 
+  * **H6:** Age will affect the link between SENAS and Ecog: older participants may be more forgiving of cognitive change and report less decline
+
+
+# Analytic approach
+
+## DAG
+
+```{r}
+knitr::include_graphics('/Users/fcorlier/Pictures/Screenshots/Screenshot (3).png') 
+```
+
+## Description of the population
+
+The dataset consisted of a Cross-sectional analysis of the baseline data from the Kaiser Healthy Aging and Diverse Life Experiences KHANDLE study (Kaiser-Permanente Health AND Life Exposures)
+
+Some variables have been recoded or created as follows:
+EDUCATION consists of a categorical variable specific to post-high school and doesn't account for vocational diploma and trade school. EDUCATION also doesn't separate obtained high school diploma (or equivalents) from uncompleted high school.
+
+### Recoding Educational attainment(categorical) as "years of education" (continuous)
+
+The variable **TRNCERT** indicates if the participant obtained a certificate:
+
+  * self-learned (=1) or,
+  * trained by an instructor (=2)
+
+and the variable **LONGCERT** indicates how long it took (values between 1 and 4 with **4 = "6 months or more"**) 
+
+we created a variable (**TRUE_CERT**) to indicate whether a certificate respects both conditions (TRNCERT =2 and LONGCERT=4)
+if both conditions are **true** the number of years of education is coded as the actual number of years of education (contained in **EDUCATION_TEXT** whenever education is 12 years or less) **+ 1** (only for participants that have 12 years or less)
+
+For the other education levels (with college attendance) coded in the variable **EDUCATION** as integers between 0 (=no college) to 5 (=PHD or equivalent), the Education will be recoded as a continuous variable (yrEDUCATION) as follows (see table):
+
+  * If **EDUCATION = 0 and TRUE_CERT =0** then Years of education = EDUCATION_TEXT
+  * If **EDUCATION = 0 and TRUE_CERT =1** then Years of education = EDUCATION_TEXT + 1
+  * If **EDUCATION = 1** then Years of education = 13 (=some college no dgr)
+  * If **EDUCATION = 2** then Years of education = 14 (=Assistant's dgr)
+  * If **EDUCATION = 3** then Years of education = 16 (=Bachelors's dgr)
+  * If **EDUCATION = 4** then Years of education = 18 (=Master's dgr)
+  * If **EDUCATION = 5** then Years of education = 20 (PHD or equivalent)
+
+```{r}
+EDUCyr_table <- read.csv("./../Edu_recode.csv",header = F)
+colnames(EDUCyr_table)<-c("Type of diploma", "coded as (in years)")
+#kable(EDUCyr_table)
+```
+
+```{r}
+hist(raw_data_averages$yrEDUCATION)
+```
+
+```{r}
+freq_table <- table(raw_data_averages$EDUCATION,raw_data_averages$yrEDUCATION,useNA = "always")
+row.names(freq_table)<-c("0: no college ","1: some college no dgr", "2: Associate", "3: Bachelor", "4: Master", "5: PhD or equiv.","missing")
+kable(freq_table)%>%
+  kable_styling("striped",full_width = F) %>%
+  add_header_above(c("Original EDUCATION categories" = 1, "Conversion: Years of education" = 19))%>%
+  add_header_above(c("Frequency table of education categories and corresponding education duration (in years)"=20))
+```
+
+
+### Family history of dementia
+
+There is information about individual relatives (relationship, still alive, was diagnosed with dementia)
+We construct 3 additional composite variables to count:
+the number of prents with dementia (PARENTAL_DEMENTIA)
+the number of siblings with dementia (SIBLING_DEMENTIA)
+the number of participants with at least one reative that developped dementia (RELATIVE_DEMENTIA)
+```{r}
+T1 <- as.data.frame(table(raw_data_averages[,c("PARENTAL_DEMENTIA")]))
+T2 <- as.data.frame(table(raw_data_averages$SIBLING_DEMENTIA))
+T3 <- as.data.frame(table(raw_data_averages$RELATIVE_DEMENTIA))
+T3$Var1<- c("no","yes")
+
+FamilyH<-rbind(T1,T2,T3)
+colnames(FamilyH)<-c("","")
+kable( FamilyH,row.names =F)%>%
+  kable_styling(full_width = F)%>%
+  pack_rows("Number of PARENTS with dementia (PARENTAL_DEMENTIA)",1,3, label_row_css = "background-color: #666; color: #fff;")%>%
+  pack_rows("Number of siblings with dementia (SIBLING_DEMENTIA)",4,9, label_row_css = "background-color: #666; color: #fff;")%>%
+  pack_rows("Has any relative with dementia (RELATIVE_DEMENTIA)",10,11, label_row_css = "background-color: #666; color: #fff;")
+
+```
+
+
+```{r}
+source('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Make_table1.R')
+knitr::opts_chunk$set(echo = F, cache = F, warning=FALSE, message=FALSE)
+read_chunk('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Make_table1.R')
+```
+
+```{r Prepare_Data, echo=FALSE, include=FALSE}
+
+```
+
+
+### General description of the population
+
+```{r Table1}
+
+```
+
+## model
+ECog_avg = b0 + b1:SENAS + b2:Age + b3:Language_of_interview + b4:Race/ethnicity + b5:Gender + b6:Education + b7:Family_history + b8:Depressive_sx + b9:Race/ethnicity:SENAS + b10:Gender:SENAS + b11:Education:SENAS + b12:Family_history:SENAS + b13:Depressive_sx:SENAS + b14:Age:SENAS
+
+# Detailed description of the Everyday cognition scale
+
+The everyday cognition scale (Ecog) [Farias *et al*., 2008](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2877034/) was initially informant-based but later used both as an informat-based and self-reported measure of subjective cogntive function either cross-sectionally or longitudinally [Farias *et al*., 2009a; 2009b; 2010 ](). The later developped short version for informant-based assesments of everyday cognition contains 12 items with good internal consistency and efficiently discriminated between cognitively healthy participants and participants with mild or advanced cognitive impairement [Faris *et al.* 2011](https://www.sciencedirect.com/science/article/pii/S1552526011000896). However, the short version the Ecog has not been used in self-reported evaluations so far.
+
+## List of items
+
+The items included in the short version are comprized of questions evaluating if participants are capable of:
+
+  * MEM1: Remembering where he/she has placed objects. 
+  * MEM2: Remembering the current date or day of the week. 
+  * LANG1: Communicating thoughts in a conversation.
+  * LANG2: Understanding spoken directions or instructions. 
+  * VISUAL_SPATIAL2: Reading a map and helping with directions when someone else is driving. 
+  * VISUAL_SPATIAL5: Finding one’s way around a house/building that he/she has visited many times. 
+  * PLANNING1: Anticipating weather changes and planning accordingly.
+  * PLANNING3: Thinking ahead. 
+  * ORGANIZATION1: Keeping living and work space organized. 
+  * ORGANIZATION2: Balancing the checkbook/account without error. 
+  * DIVIDED_ATTENTION1: Doing two things at once. 
+  * DIVIDED_ATTENTION2: Cooking or working, and talking at the same time.	
+
+The following table lists descriptive statistics for the individual items and global averages with or without incomplete cases. 
+```{r Table2, include=TRUE}
+
+```
+
+
+## distributions
+
+```{r distri, fig.show="hold", out.width="50%",fig.cap="Distribution of ECOG values(including incomplete cases) "}
+hist(DF$Ecog12_including_partial_averages, main = "12 item ECOG global average")
+hist(log(DF$Ecog12_including_partial_averages),main = "log-transformed ECOG12 average")
+
+```
+
+Note that the distribution is still strongly skewed even for the standardized log.
+
+
+
+# Verifying the existence of a non-liear reationship between SENAS scores and Ecog
+
+The Model as stated in 5.3 assumes linear relationships between SENAS and Ecog. To get a litle more confidence in this, Maria G recommended that we investigate this assumption.
+
+## Ecog ratings by SENAS scores with local averages (smoothing type = "loess")
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = F, cache = F, warning=FALSE, message=FALSE)
+read_chunk('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Plotting.R')
+```
+
+
+```{r Ecog_vs_SENAS, echo=FALSE, warning=FALSE, message=FALSE}
+
+```
+
+
+## Rectricted cubic splines
+
+The three following plots show rcs regressions with hinges at the Frank Harrell quantiles 
+(5, 27.5, 50, 72.5 and 95 %)
+
+```{r restricted-cubic-splines,  fig.show="hold", out.width="30%", fig.cap="Relationship between Ecog and SENAS cognitive scores"}
+
+
+```
+
+In the three groups of plots above, the relationship between between Ecog and executive function from the SENAS seems to have different slopes in the low values (<1) and the hight values (>1)
+So in the following analysis we will include two linear splines for this variable.
+
+```{r Ecog_vs_SENAS_lsp}
+
+```
+
+*note: the knot at executive function = 1 is still relevant after transforming Ecog into log(Ecog)*
+
+
+## Updated analytic approach
+
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
+source('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Statistical_analysis.R')
+#read_chunk('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Statistical_analysis.R')
+```
+We will sequentially analyse the consequtive models as follows:
+Our main model always includes Age, as this variable is known to alway be associated with both, our exposure variables and our outcome variable.
+
+Episodic memory:
+
+  * Base model for SENAS episodic memory (memory):
+    + Ecog_avg = memory + AGE + language + memory\*AGE
+    
+  * Two factor models with gender, race, education, family history of dementia, depressive symptoms (denoted V1-V5 below) in addition to AGE
+    + Ecog_avg = memory + AGE + language + memory\*AGE + **V1-5** + memory\***V1-5**
+    
+  * full model:
+    + Ecog_avg = memory + AGE + language + memory\*AGE + gender + memory\*gender + race + memory\*race + education + memory\*education + familyHistory + memory\*FanilyHistory + depression + memory\*depression
+
+Executive function:
+
+  * Base model for SENAS executive function (ex_fun) with 2 splines around 1 (denoted spline(ex_fun,knot=1) below)
+    + Ecog_avg = ex_fun<1 + ex_fun>1 + AGE + language + ex_fun<1\*AGE + ex_fun>1\*AGE
+    
+  * Two factor models with gender, race, education, family history of dementia, depressive symptoms (denoted V1-V5 below) in addition to AGE
+    + Ecog_avg = spline(ex_fun,knot=1) + AGE + language + spline(ex_fun,knot=1)\*AGE + **V1-5** + spline(ex_fun,knot=1)\***V1-5**
+    
+  * full model:
+    + Ecog_avg = spline(ex_fun,knot=1) + AGE + language + spline(ex_fun,knot=1)\*AGE + gender + spline(ex_fun,knot=1)\*gender + race + spline(ex_fun,knot=1)\*race + education + spline(ex_fun,knot=1)\*education + familyHistory + spline(ex_fun,knot=1)\*FanilyHistory + depression + spline(ex_fun,knot=1)\*depression
+    
+    
+# Results:
+## Episodic memory
+### Base model
+#### regression results:
+Call:
+$statDFmem\$logEcog12 ~ statDFmem\$memory*statDFmem\$AGE$
+
+Output:
+
+*********************************************************
+
+[a link to a formatted output here](Formated_regression_tables/Base_model_memory.pdf)
+
+*********************************************************
+```{r}
+# CRYSTAL: the .pdf files are not generated automatically, but only the .html with the same names which I have to save as pdf by hand..(didn't find a better way yet)
+```
+
+
+
+
+#### residuals and predicted values:
+
+
+```{r fig.show="hold", out.width="50%", fig.cap="histogram of residuals and plot of predicted values",cache=FALSE}
+predicted <- predict.lm(BASEmod_mem)
+hist(BASEmod_mem$residuals)
+ggplot(data = DFmem, aes(DFmem$logEcog12,predicted))+geom_point()+geom_smooth(method = "loess")+ggtitle("base model predicted values vs observed values")
+```
+
+
+### Two variable models
+#### model:
+We constructed consecutive models
+In the following order : 
+* "age + race" 
+* "age + gender"
+* "age + years of education + race" (because edu is patterned by race)
+* "age + family dementia"
+* "age + depressive symptoms"
+
+*********************************************************
+
+[a link to a formatted output here](Formated_regression_tables/2variable_models_memory.pdf)
+
+*********************************************************
+
+#### Predicted values
+
+```{r,fig.show="hold", out.width="50%",cache=FALSE, eval=T}
+mem_plots<-list()
+textSize <- 12
+PM<- margin(.2, 0.2, .2, .5, "cm")
+limin <- -0.02
+limax <- 0.8
+predrange<-c(-1.5,-1,0,0.5,1,2,2.5)#defines the range of values from memory or Executive function for which to predict ECog
+########################################################################
+#base model: 
+xba<- rep(predrange,3)
+#generating a fake dataset with 3 age groups (all english speakers)
+newDFage <- data.frame(
+  memory=xba,
+  AGE_75_d=rep(c(-1,0,1),each=7))#,
+#  language=rep("English",21) )#for now we're dropping language
+
+#generating predicted values
+predggba <- predict(BASEmod_mem,
+                  newDFage, interval = "conf")
+
+Ba <- ggplot(data = newDFage)+
+  geom_ribbon(aes(xba,ymin=predggba[,2],ymax=predggba[,3],group=factor(AGE_75_d,levels = c(1,0,-1)),fill=factor(AGE_75_d,levels = c(1,0,-1))),alpha=0.15)+
+  geom_line(aes(xba,predggba[,1],color=factor(AGE_75_d,levels = c(1,0,-1)),linetype=factor(AGE_75_d,levels = c(1,0,-1))),size=1)+ 
+  theme_minimal()+
+  ylab("Predicted log(ECog)")+
+  xlab("Episodic memory")+
+  #labs(title = "Predicted values by age (base model)")+ 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,0.65),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.text.align=1,
+        text = element_text(size = textSize))+
+  scale_color_discrete(name="Age (years)", 
+                       labels = c("85","75","65"))+
+  scale_linetype_discrete(name="Age (years)", 
+                          labels = c("85","75","65"))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE,
+         color=FALSE,
+         linetype=FALSE,
+         group=FALSE)
+mem_plots[[1]]<-Ba
+Ba
+###########################################################################
+#race
+xre<- rep(predrange,4)
+#Generating a fake data table with different ethnicity groups (note: the x variable above is repeated as many times as there are groups here 6)
+newDFrace <- data.frame(
+  memory=xre,
+  AGE_75_d=rep(c(0),each=28), #"each 42" is for 7 values of x times the number of groups
+  race=rep(c("Non-Latino-White","Black","Latino","Asian"),each=7))#,
+  # language=rep("English",42))
+
+predggra <- predict(memfit[[1]],
+                  newDFrace, interval = "conf")
+Ra<-ggplot(data = newDFrace)+
+  geom_ribbon(aes(xre,ymin=predggra[,2],ymax=predggra[,3],group=race,fill=race),alpha=0.15)+
+  geom_line(aes(xre,predggra[,1],color=race,linetype=race),size=1)+ 
+  theme_minimal()+
+  ylab("Predicted log(ECog)")+
+  xlab("Episodic memory")+
+  #labs(title = "Predicted values by Race/Ethnicity")+
+  theme(legend.justification=c(1,0), 
+        legend.position=c(.95,0.62),
+        legend.title = element_blank(),
+        legend.spacing = unit(.5, 'cm'),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=1,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  # scale_color_discrete(labels = c("Asian","Black","Latino","Multi","White"))+
+  # scale_linetype_discrete(labels = c("Asian","Black","Latino","Multi","White"))+
+  guides(fill = FALSE,
+         color=FALSE,
+         linetype=FALSE,
+         group=FALSE)
+mem_plots[[2]]<-Ra
+Ra
+```
+
+```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=T}
+##########################################################################
+#gender
+xge<- rep(predrange,2)
+newDFgender <- data.frame(
+  memory=xge,
+  AGE_75_d=rep(c(0),each=14),
+  GENDER=rep(c("Man","Woman"),each=7))#,
+  # language=rep("English",14))
+predggge <- predict(memfit[[2]],
+                  newDFgender, interval = "conf")
+Ge<-ggplot(data = newDFgender)+
+  geom_ribbon(
+    aes(xge,
+        ymin=predggge[,2],
+        ymax=predggge[,3],
+        group=factor(GENDER,levels = c("Woman","Man")),
+        fill=factor(GENDER,levels = c("Woman","Man"))),alpha=0.15)+
+  geom_line(
+    aes(xge,
+        predggge[,1],
+        color=factor(GENDER,levels = c("Woman","Man")),
+        linetype=factor(GENDER,levels = c("Woman","Man"))),size=1)+ 
+  theme_minimal()+
+  ylab("Predicted log(ECog)")+
+  xlab("Episodic memory")+
+  #labs(title = "Predicted values by Gender") + 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,0.70),
+        #legend.title = element_blank(),
+        legend.spacing = unit(.1,"cm"),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title.align=0,
+        text = element_text(size = textSize))+
+  scale_linetype_discrete(name= "Gender",labels=c("Women","Men"))+
+  scale_color_discrete(name= "Gender", labels=c("Women","Men"))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE,
+         color=FALSE,
+         linetype=FALSE,
+         group=FALSE)
+mem_plots[[3]]<-Ge
+Ge
+############################################################################
+#education
+xed<- rep(predrange,3)
+newDFedu <- data.frame(
+  memory=xed,
+  AGE_75_d=rep(c(0),each=21),
+  yrEDU=rep(c(-4,0,4),each=7),
+  race=rep("Non-Latino-White",21))
+
+predgged <- predict(memfit[[3]],
+                  newDFedu, interval = "conf")
+Ed <- ggplot(data = newDFedu)+ 
+  geom_ribbon(aes(xed,ymin=predgged[,2],ymax=predgged[,3],group=factor(yrEDU),fill=factor(yrEDU)),alpha=0.15) +
+  geom_line(aes(xed,predgged[,1],color=factor(yrEDU),linetype=factor(yrEDU)),size=1) + 
+  theme_minimal() +
+  ylab("Predicted log(ECog)") + 
+  xlab("Episodic memory")+
+  #labs(title = "Predicted values by education duration")+ 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(.95,0.70),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=1,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_color_discrete(name="Years of education", labels = c("8 ","12 ","16 "))+
+  scale_linetype_discrete(name="Years of education", labels = c("8 ","12 ","16 "))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE,
+         color=FALSE,
+         linetype=FALSE,
+         group=FALSE)
+
+mem_plots[[4]]<-Ed
+Ed
+
+#############################
+
+```
+
+```{r}
+###########################  EDUCATION UNCORRECTED  ##########################
+#education
+xed<- rep(predrange,3)
+newDFedu <- data.frame(
+  memory=xed,
+  AGE_75_d=rep(c(0),each=21),
+  yrEDU=rep(c(-4,0,4),each=7))
+
+predgged <- predict(memfit[[6]],
+                  newDFedu, interval = "conf")
+Ed_uncorr <- ggplot(data = newDFedu)+ 
+  geom_ribbon(aes(xed,ymin=predgged[,2],ymax=predgged[,3],group=factor(yrEDU),fill=factor(yrEDU)),alpha=0.15) +
+  geom_line(aes(xed,predgged[,1],color=factor(yrEDU),linetype=factor(yrEDU)),size=1) + 
+  theme_minimal() +
+  ylab(element_blank()) + 
+  xlab(element_blank())+
+  #labs(title = "Predicted values by education duration")+ 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(.95,0.70),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=1,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_color_discrete(name="Years of education", labels = c("8 ","12 ","16 "))+
+  scale_linetype_discrete(name="Years of education", labels = c("8 ","12 ","16 "))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE,
+         color=FALSE,
+         linetype=FALSE,
+         group=FALSE)
+
+Ed_uncorr
+```
+
+
+```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=T}
+##########################################################################
+#familial dementia
+xfh<- rep(predrange,2)
+newDFfhist <- data.frame(
+  memory=xfh,
+  AGE_75_d=rep(c(0),each=14),
+  F_Hist=rep(c(0,1),each=7))#,
+  # language=rep("English",14))
+predggfh <- predict(memfit[[4]],
+                  newDFfhist, interval = "conf")
+
+Fh <- ggplot(data = newDFfhist)+
+geom_ribbon(aes(xfh,ymin=predggfh[,2],ymax=predggfh[,3],group=factor(F_Hist,levels = c(1,0)),fill=factor(F_Hist,levels= c(1,0))),alpha=0.15) + 
+  geom_line(aes(xfh,predggfh[,1],color=factor(F_Hist,levels = c(1,0)),linetype=factor(F_Hist,levels = c(1,0))),size=1) + 
+  theme_minimal() +
+  ylab("Predicted log(ECog)") + 
+  xlab("Episodic memory")+
+  #labs(title = "Predicted values by Family history of dementia") + 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,.67),
+        legend.spacing = unit(0.2,"cm"),
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.title.align=0,
+        text = element_text(size = textSize))+
+  scale_color_discrete(name="Family history of dementia", labels = c("yes","no"))+
+  scale_linetype_discrete(name="Family history of dementia", labels = c("yes","no"))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+    guides(fill = FALSE,
+           color=FALSE,
+           linetype=FALSE,
+           group=FALSE)
+mem_plots[[5]]<-Fh
+Fh
+###########################################################################
+#depression
+xdpr<- rep(predrange,3)
+newDFdepr <- data.frame(
+  memory=xdpr,
+  AGE_75_d=rep(c(0),each=21),
+  depression_01=rep(c(-1,0,1),each=7))#,
+  # language=rep("English",21))
+
+predggdpr <- predict(memfit[[5]],
+                  newDFdepr, interval = "conf")
+
+
+Dpr <- ggplot(data = newDFdepr)+ 
+ geom_ribbon(aes(xdpr,ymin=predggdpr[,2],ymax=predggdpr[,3],group=factor(depression_01,levels = c(1,0,-1)),fill=factor(depression_01,levels = c(1,0,-1))),alpha=0.15) + 
+  geom_line(aes(xdpr,predggdpr[,1],color=factor(depression_01,levels = c(1,0,-1)),linetype=factor(depression_01,levels = c(1,0,-1))),size=1) + 
+  theme_minimal() +
+  ylab("Predicted log(ECog)") + 
+  xlab("Episodic memory")+
+  #labs(title = "Predicted values by magnitude of depressive symptoms") + 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,0.73),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=0,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_linetype_discrete(name="Depressive symptoms")+
+  scale_color_discrete(name="Depressive symptoms")+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+    guides(fill = FALSE,
+           color=FALSE,
+           linetype=FALSE,
+           group=FALSE)
+mem_plots[[6]]<-Dpr
+Dpr
+```
+
+```{r, echo=FALSE,message=FALSE, warning=FALSE,include=FALSE}
+#saving the individual figures
+require(ggpubr)
+tiff("./Figure1a.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ba,ncol = 1)
+dev.off()
+tiff("./Figure1b.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ra,ncol = 1)
+dev.off()
+tiff("./Figure1c.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ge,ncol = 1)
+dev.off()
+tiff("./Figure1d.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ed,ncol = 1)
+dev.off()
+tiff("./Figure1e.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Fh,ncol = 1)
+dev.off()
+tiff("./Figure1f.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Dpr,ncol = 1)
+dev.off()
+
+```
+
+
+
+```{r, echo=FALSE,include=FALSE}
+require(ggpubr)
+tiff("./Figure1_ggarange.tiff",res = 300,width = 2550,height = 3300)
+ggarrange(
+  ggarrange(Ba ,Ra,
+            labels = c("a","b"),ncol = 2),
+  ggarrange(Ge,Ed,
+            labels = c("c","d"),ncol = 2),
+  ggarrange(Fh,Dpr, 
+          labels = c("e","f"),ncol = 2),
+  nrow = 3)
+dev.off()
+```
+
+
+
+### Full model
+
+In addition to the present full model, we could add multiple interaction between the different regessors (like age:education:gender) 
+
+*********************************************************
+
+[full model output here](Formated_regression_tables/full_model_memory.pdf)
+
+*********************************************************
+
+
+## Executive function
+### Base model
+
+*********************************************************
+
+[Here a formated output](Formated_regression_tables/Base_model_executive.pdf)
+
+*********************************************************
+
+### Two varable models
+
+*********************************************************
+
+[A link to a formatted output here:](Formated_regression_tables/2variable_models_executive.pdf)
+
+*********************************************************
+
+#### Predicted values plots
+```{r predicted_scores_2,fig.show="hold", out.width="50%",cache=FALSE}
+require(lspline)
+require(ggformula)
+EF_plots<-list()
+#base
+xba<- c(-1.5,-1,0,0.5,1,2,2.5,-1.5,-1,0,0.5,1,2,2.5,-1.5,-1,0,0.5,1,2,2)
+newDFage <- data.frame(
+  ex_function=xba,
+  AGE_75_d=rep(c(-1,0,1),each=7))#,
+  # language=rep("English",21))
+predggba <- predict(BASEmod_ex,
+                  newDFage, interval = "conf")
+Ba <- ggplot(data = newDFage)+
+  geom_ribbon(aes(xba,ymin=predggba[,2],ymax=predggba[,3],group=factor(AGE_75_d,levels = c(1,0,-1)),fill=factor(AGE_75_d,levels = c(1,0,-1))),alpha=0.15)+
+  geom_line(aes(xba,predggba[,1],color=factor(AGE_75_d,levels = c(1,0,-1)),linetype=factor(AGE_75_d,levels = c(1,0,-1))),size=1)+ 
+  theme_minimal()+
+  ylab(element_blank())+
+  xlab("Executive function")+
+  #labs(title = "Predicted values by age (base model)")+ 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,0.65),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=0,
+        text = element_text(size = textSize))+
+  scale_color_discrete(name="Age (years)", 
+                       labels = c("85","75","65"))+
+  scale_linetype_discrete(name="Age (years)", 
+                          labels = c("85","75","65"))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE)
+EF_plots[[1]]<-Ba
+Ba
+##########################################################################
+#race
+xre<- c(-1.5,-1,0,0.5,1,2,2,-1.5,-1,0,0.5,1,2,2,-1.5,-1,0,0.5,1,2,2,-1.5,-1,0,0.5,1,2,2.5)
+newDFrace <- data.frame(
+  ex_function=xre,
+  AGE_75_d=rep(c(0),each=28),
+  race=rep(c("Asian","Black","Latino","Non-Latino-White"),each=7))#,
+  # language=rep("English",35))
+predggra <- predict(results_execfun[[1]],
+                  newDFrace, interval = "conf")
+
+
+Ra<-ggplot(data = newDFrace)+
+  geom_ribbon(aes(xre,ymin=predggra[,2],ymax=predggra[,3],group=race,fill=race),alpha=0.15)+
+  geom_line(aes(xre,predggra[,1],color=race,linetype=race),size=1)+ 
+  theme_minimal()+
+  ylab(element_blank())+
+  xlab("Executive function")+
+  #labs(title = "Predicted values by Race/Ethnicity")+
+  theme(legend.justification=c(1,0), 
+        legend.position=c(.95,0.60),
+        legend.title = element_blank(),
+        legend.spacing = unit(.5, 'cm'),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.text.align=0,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  # scale_color_discrete(labels = c("Asian","Black","Latino","Multi","White"))+
+  # scale_linetype_discrete(labels = c("Asian","Black","Latino","Multi","White"))+
+  guides(fill = FALSE)
+EF_plots[[2]]<-Ra
+Ra
+###########################################################################
+#gender
+xge<- rep(predrange,2)
+newDFgender <- data.frame(
+  ex_function=xge,
+  AGE_75_d=rep(c(0),each=14),
+  GENDER=rep(c("Woman","Man"),each=7))#,
+  # language=rep("English",14))
+predggge <- predict(results_execfun[[2]],
+                  newDFgender, interval = "conf")
+Ge <- ggplot(data = newDFgender)+
+  geom_ribbon(aes(xge,ymin=predggge[,2],ymax=predggge[,3],group=factor(GENDER,levels=c("Woman","Man")),fill=factor(GENDER,levels=c("Woman","Man"))),alpha=0.15)+
+  geom_line(aes(xge,predggge[,1],color=factor(GENDER,levels=c("Woman","Man")),linetype=factor(GENDER,levels=c("Woman","Man"))),size=1)+ 
+  theme_minimal()+
+  ylab(element_blank())+
+  xlab("Executive function")+
+  #labs(title = "Predicted values by Gender") + 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,0.70),
+        #legend.title = element_blank(),
+        legend.spacing = unit(.1,"cm"),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=0,
+        text = element_text(size = textSize))+
+  scale_linetype_discrete(name="Gender", labels=c("Women","Men"))+
+  scale_color_discrete(name="Gender",labels=c("Women","Men"))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE)
+EF_plots[[3]]<-Ge
+Ge
+###########################################################################
+#education
+xed<- c(-1.5,-1,0,0.5,1,2,2,-1.5,-1,0,0.5,1,2,2,-1.5,-1,0,0.5,1,2,2.5)
+newDFedu <- data.frame(
+  ex_function=xed,
+  AGE_75_d=rep(c(0),each=21),
+  yrEDU=rep(c(-4,0,4),each=7),
+  race=rep("Non-Latino-White",21))#,
+  # language=rep("English",21))
+predgged <- predict(results_execfun[[3]],
+                  newDFedu, interval = "conf")
+
+
+
+Ed_exfun <- ggplot(data = newDFedu)+ 
+  geom_ribbon(aes(xed,ymin=predgged[,2],ymax=predgged[,3],group=factor(yrEDU,levels=c(4,0,-4)),fill=factor(yrEDU,levels=c(4,0,-4))),alpha=0.15) +
+  geom_line(aes(xed,predgged[,1],color=factor(yrEDU,levels=c(4,0,-4)),linetype=factor(yrEDU,levels=c(4,0,-4))),size=1) + 
+  theme_minimal() +
+  ylab(element_blank()) + 
+  xlab("Executive function")+
+  #labs(title = "Predicted values by education duration")+ 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(.95,0.65),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=0,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_color_discrete(name="Years of education", labels = c("16 ","12 ","8 "))+
+  scale_linetype_discrete(name="Years of education", labels = c("16 ","12 ","8 "))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE)
+EF_plots[[4]]<-Ed_exfun
+Ed_exfun
+############################################################################
+#familial dementia
+xfh<- rep(predrange,2)
+newDFfhist <- data.frame(
+  ex_function=xfh,
+  AGE_75_d=rep(c(0),each=14),
+  F_Hist=rep(c(0,1),each=7))#,
+  # language=rep("English",14))
+predggfh <- predict(results_execfun[[4]],
+                  newDFfhist, interval = "conf")
+Fh <- ggplot(data = newDFfhist,aes(xfh,predggfh[,1],color=factor(F_Hist,levels = c(1,0)),linetype=factor(F_Hist,levels = c(1,0))))+
+geom_ribbon(inherit.aes = FALSE,aes(xfh,ymin=predggfh[,2],ymax=predggfh[,3],group=factor(F_Hist,levels = c(1,0)),fill=factor(F_Hist,levels = c(1,0))),alpha=0.15) + 
+  geom_line(size=1) + 
+  theme_minimal() +
+  ylab(element_blank()) + 
+  xlab("Executive function")+
+  #labs(title = "Predicted values by Family history of dementia") + 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,.70),
+        legend.spacing = unit(0.2,"cm"),
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=0,
+        text = element_text(size = textSize))+
+  scale_color_discrete(name="Family history of dementia", labels = c("yes","no"))+
+  scale_linetype_discrete(name="Family history of dementia", labels = c("yes","no"))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE)
+EF_plots[[5]]<-Fh
+Fh
+#############################################################################
+#depression
+xdpr<- c(-1.5,-1,0,0.5,1,2,2.5,-1.5,-1,0,0.5,1,2,2.5,-1.5,-1,0,0.5,1,2,2)
+newDFdepr <- data.frame(
+  ex_function=xdpr,
+  AGE_75_d=rep(c(0),each=21),
+  depression_01=rep(c(-1,0,1),each=7))#,
+  # language=rep("English",21))
+predggdpr <- predict(results_execfun[[5]],
+                  newDFdepr, interval = "conf")
+
+Dpr <- ggplot(data = newDFdepr)+ 
+ geom_ribbon(aes(xdpr,ymin=predggdpr[,2],ymax=predggdpr[,3],group=factor(depression_01,levels = c(1,0,-1)),fill=factor(depression_01,levels = c(1,0,-1))),alpha=0.15) + 
+  geom_line(aes(xdpr,predggdpr[,1],color=factor(depression_01,levels = c(1,0,-1)),linetype=factor(depression_01,levels = c(1,0,-1))),size=1) + 
+  theme_minimal()+
+  ylab(element_blank()) + 
+  xlab("Executive function")+
+  #labs(title = "Predicted values by magnitude of depressive symptoms") + 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.95,0.65),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=1,
+        legend.title.align=1,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_linetype_discrete(name="Depressive symptoms")+
+  scale_color_discrete(name="Depressive symptoms")+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE)
+EF_plots[[6]]<-Dpr
+Dpr
+
+############################EDUCATION UNCORRECTED#######################
+
+
+xed<- rep(predrange,3)
+newDFedu <- data.frame(
+  ex_function=xed,
+  AGE_75_d=rep(c(0),each=21),
+  yrEDU=rep(c(-4,0,4),each=7))
+  
+predgged <- predict(results_execfun[[6]],
+                  newDFedu, interval = "conf")
+Ed_uncorr <- ggplot(data = newDFedu)+ 
+  geom_ribbon(aes(xed,ymin=predgged[,2],ymax=predgged[,3],group=factor(yrEDU,levels=c(4,0,-4)),fill=factor(yrEDU,levels=c(4,0,-4))),alpha=0.15) +
+  geom_line(aes(xed,predgged[,1],color=factor(yrEDU,levels=c(4,0,-4)),linetype=factor(yrEDU,levels=c(4,0,-4))),size=.6) + 
+  theme_minimal() +
+  ylab(element_blank()) + 
+  xlab("Executive function")+
+  #labs(title = "Predicted values by education duration")+ 
+  theme(legend.justification=c(1,0), 
+        legend.position=c(.95,0.65),
+        legend.direction = "vertical",
+        legend.text=element_text(size=textSize),
+        legend.title = element_text(size=textSize),
+        legend.text.align=0,
+        legend.title.align=0,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_color_discrete(name="Years of education", labels = c("16 ","12 ","8 "))+
+  scale_linetype_discrete(name="Years of education", labels = c("16 ","12 ","8 "))+
+  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  default = FALSE, clip = "on")+
+  guides(fill = FALSE)
+
+Ed_uncorr
+
+```
+
+```{r,message=FALSE, warning=FALSE, echo=FALSE,include=FALSE}
+#saving the individual figure
+tiff("./Figure2a.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ba,ncol = 1)
+dev.off()
+tiff("./Figure2b.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ra,ncol = 1)
+dev.off()
+tiff("./Figure2c.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ge,ncol = 1)
+dev.off()
+tiff("./Figure2d.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Ed_exfun,ncol = 1)
+dev.off()
+tiff("./Figure2e.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Fh,ncol = 1)
+dev.off()
+tiff("./Figure2f.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(Dpr,ncol = 1)
+dev.off()
+
+```
+
+
+
+*********************************************************
+
+[open full resolution image here:](Figure2_ggexport.tiff)
+
+*********************************************************
+
+```{r eval=TRUE, message=FALSE, warning=FALSE, include=FALSE}
+#one more alternative
+tiff("./Figure2_ggarange.tiff",res = 300,width = 2550,height = 3300)
+ggarrange(
+  ggarrange(Ba ,Ra,
+            labels = c("a","b"),ncol = 2),
+  ggarrange(Ge,Ed,
+            labels = c("c","d"),ncol = 2),
+  ggarrange(Fh,Dpr, 
+          labels = c("e","f"),ncol = 2),
+  nrow = 3)
+dev.off()
+```
+
+
+
+
+## A look at residuals and prediction accuracy
+
+```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=FALSE}
+
+predicted <- predict(results_execfun[[1]],DFex)
+#tempDF<-cbind(na.omit(DFex,cols=c("ex_function","logEcog12","AGE","language","race")),predicted)
+tempDF<-cbind(DFex,predicted)
+
+hist(results_execfun[[1]]$residuals)
+ggplot(data = tempDF, aes(logEcog12,predicted))+geom_point()+geom_smooth(method = "loess")+
+ggtitle("Ecog =  EF(<1)*age + EF(>1)*age + EF(<1)*race + EF(>1)*race")
+```
+
+### Full model
+
+And finally the full model with executive function (with all the above)
+
+*********************************************************
+
+[Formatted output of the full model here](Formated_regression_tables/full_model_executive.pdf)
+
+*********************************************************
+
+
+# Potential complementary approaches:
+
+## Item response theory
+
+As discussed with Dan Mungas, it may be interesting to perform an ITR analysis (using the R package ['Latent trait modeling'](https://cran.r-project.org/web/packages/ltm/ltm.pdf)).
+Based on the documentation of the package, graded response models [(samejima *et al.*, 1969)](https://onlinelibrary.wiley.com/doi/epdf/10.1002/j.2333-8504.1968.tb00153.x) are adequate for analyses with multiple ordinal item with the same scale with the assumption that the different items are influenced by the same underlying process (e.g in our case it implies that individual items all reflect general everyday cognition, and will help evaluate which items are most informative of the underlying congitive function)
+
+## Latent cognitive function
+
+As discussed with Maria Glymour, one potential limitation of our current analytic aproach is that it assumes that SENAS scores equaly reflect cognitive efficiency accross participants. However, it would be reasonable to assume that in some participants (with e.g. a primary language other than English or Spanish, or specific impairemrements due to focal forms of neurodegeneration) the actual cognitive function be only party reflected in SENAS scores. Consequently in would be pertinent to include a latent variable representing cognitive status in the model.
+
+## Stepwise feature selection selection
+We discussed that we want just a theory-drven analysis for now.
+
+## Other verifications
+Checking if we should keep Language, because it is possibly redundant with ethinicity
+```{r}
+table(raw_data_averages$language,raw_data_averages$race, useNA = "ifany")
+```
+
+
