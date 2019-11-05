@@ -1,0 +1,7 @@
+12 years or less and no certificate,actual number of years of education (EDUCATION_TEXT)
+12 years or less with certificate (>6month with instructor),EDUCATION_TEXT + 1
+some college but no degree,13
+Associates dgr.,14
+Bachelor's dgr.,16
+Master's dgr.,18
+Doctoral dgr. Or equivalent,20
