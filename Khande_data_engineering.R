@@ -43,6 +43,11 @@ raw_data_sas[which(raw_data_sas[,"CONCERNED_THINKING"]==1),"CONCERNED_THINKING"]
 raw_data_sas[which(raw_data_sas[,"GENDER"]==2),"GENDER"] <- "Woman"
 raw_data_sas[which(raw_data_sas[,"GENDER"]==1),"GENDER"] <- "Man"
 
+#Centering SENAS scores 
+raw_data_sas$SENAS_vrmem <- scale(raw_data_sas$SENAS_vrmem)
+raw_data_sas$SENAS_wm <-scale(raw_data_sas$SENAS_wm)
+raw_data_sas$SENAS_exec <- scale(raw_data_sas$SENAS_exec)
+
 
 #create a clean table
 raw_data_clean <- raw_data_sas

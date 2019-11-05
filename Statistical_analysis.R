@@ -27,11 +27,11 @@ DFmem <- data.frame(DFmem)
 BASEmem <- "logEcog12 ~ memory*AGE_75_d " #it is not necessary to specify memory or age alone because they need to be estimated anyways to get estimates for the inteaction term
 interactions <- c(BASEmem, "memory*race", "memory*GENDER","memory*yrEDU + memory*race","memory*F_Hist","memory*depression_01","memory*yrEDU")
 length(interactions)
+memfit <- list()
+memfit[[1]] <- lm(data = DFmem,formula = BASEmem)
 
-BASEmod_mem <- lm(data = DFmem,formula = BASEmem)
 
-
-baseTabmem <- tab_model(BASEmod_mem,
+baseTabmem <- tab_model(memfit[[1]],
           title = "Relation between ECog and memory", 
           auto.label = T,
           dv.labels = "Base model logEcog",
@@ -50,26 +50,19 @@ mem[[4]] <-paste(BASEmem, " + ", interactions[5])
 mem[[5]] <-paste(BASEmem, " + ", interactions[6])
 mem[[6]] <-paste(BASEmem, " + ", interactions[7])
 
-# estimating the 5 models
-memfit <- list()
-memfit[[1]]<- lm(data = DFmem, formula = mem[[1]])
-memfit[[2]]<- lm(data = DFmem, formula = mem[[2]])
-memfit[[3]]<- lm(data = DFmem, formula = mem[[3]])
-memfit[[4]]<- lm(data = DFmem, formula = mem[[4]])
-memfit[[5]]<- lm(data = DFmem, formula = mem[[5]])
-memfit[[6]]<- lm(data = DFmem, formula = mem[[6]])
+# estimating the 5 models (+one where educ is not adjusted for race) 
+#and adding them to a list called memfit
+for(n in 1:6){
+memfit[[n+1]]<- lm(data = DFmem, formula = mem[[n]])
+}
+
 
 TwoVarMem <-tab_model(memfit, title = "Multi model table memory", 
           auto.label = T,
-          dv.labels = c("Base + race","base + Gender","Base + Education + race","Base + Family History","Base + depression","Base+Education"),
+          dv.labels = c("base","Base + race","base + Gender","Base + Education + race","Base + Family History","Base + depression","Base+Education"),
           digits = 3,
           ci.hyphen = ", ",
-          # pred.labels = c("(Intercept)","memory","Age_centered_at75 (decades)","language(Spanish)",
-          #                 "Asian","Black","Latino","memory:Age_centered_at75",
-          #                 "memory:Asian","memory:Black","memory:Latino",
-          #                 "Gender(male)","memory:Gender(male)","Education (yrs) centered at 12","memory:educaton",
-          #                 "Family_history","memory:Family_history","depression","memory:depression"),
-          file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_memory.html")
+          file = "Formated_regression_tables/2variable_models_memory.html")
 
 TwoVarMem
 
@@ -81,12 +74,6 @@ fullmem <- tab_model(fullModelfit, title = "Relation between ECog and memory all
           dv.labels = "Full model",
           digits = 3,
           ci.hyphen = ", ",
-          # pred.labels = c("(Intercept)","memory","Age_centered_dec","language(Spanish)",
-          #                 "Asian","Black","Latino","Gender(male)","Education_centered_at12","Family_history","depression",
-          #                 "memory:Age_centered",
-          #                 "memory:Asian","memory:Black","memory:Latino",
-          #                 "memory:Gender(male)","memory:Educaton",
-          #                 "memory:Family_history","memory:depression"),
           file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_memory.html")
 fullmem
 # ## @knitr stepwise-model-memory  
@@ -110,45 +97,33 @@ DF1<-na.omit(DFex,cols=c("ex_function","logEcog12","AGE_75_d"))
 BASEex <- "logEcog12 ~ I(lspline(ex_function, knots =1))*AGE_75_d " #it is not necessary to specify memory or age alone because they need to be estimated anyways to get estimates for the inteaction term
 interactionsex <- c(BASEex, "I(lspline(ex_function, knots =1))*race", "I(lspline(ex_function, knots =1))*GENDER","I(lspline(ex_function, knots =1))*yrEDU + I(lspline(ex_function, knots =1))*race","I(lspline(ex_function, knots =1))*F_Hist","I(lspline(ex_function, knots =1))*depression_01","I(lspline(ex_function, knots =1))*yrEDU")
 
-
-BASEmod_ex <- lm(BASEex,data = DF1)
-basetabex<-tab_model(BASEmod_ex, title = "Relation between ECog and executive function", 
+results_execfun<-list()
+results_execfun[[1]] <- lm(BASEex,data = DF1)
+basetabex<-tab_model(results_execfun[[1]], title = "Relation between ECog and executive function", 
           auto.label = T,
           dv.labels = "Base model logEcog",
           digits = 3,
           ci.hyphen = ", ",
-          #pred.labels = c("(Intercept)",
-          #"Executive function <1","Executive function >1",
-          #"AGE_centered_75_decades","Executive function (<1):AGE","Ececutive funtion (>1):AGE"),
           file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive.html")
 basetabex
 
-modlistex <- list()
+modlistex<-list()
 for(t in 1:6){
   print(t)
   modlistex[[t]] <- paste0(BASEex, " + ", interactionsex[t+1])  
 }
 
 
-results_execfun<-list()
+
 for (i in 1:length(modlistex)) {
   model<- lm(data = DFex, formula = modlistex[[i]])
-  results_execfun[[i]] <- model
+  results_execfun[[i+1]] <- model
 }
 TwoVarEx<-tab_model(results_execfun, title = "Relation between ECog and executive function",
           auto.label = T,
           dv.labels = c("Base + Race/Ethnicity","Base + GENDER","Base + Education + race", "Base + Family history","Base + depression","Base + Education"),
           digits = 3,
           ci.hyphen = ", ",
-          # pred.labels = c("(Intercept)","Executive function <1","Executive function >1","AGE_centered at 75 by decade","Asian","Black","Latino",
-          #                 "Executive function (<1):AGE","Ececutive funtion (>1):AGE",
-          #                 "Executive function (<1):Asian","Ececutive funtion (>1):Asian",
-          #                 "Executive function (<1):Black","Ececutive funtion (>1):Black",
-          #                 "Executive function (<1):Latino","Ececutive funtion (>1):Latino",
-          #                 "GENDER(Male)","Executive function (<1):GENDER(Male)","Ececutive funtion (>1):GENDER(Male)",
-          #                 "YearsEDUCATION","Executive function (<1):YearsEDUCATION","Ececutive funtion (>1):YearsEDUCATION",
-          #                 "FamilyHISTORY","Executive function (<1):FamilyHISTORY","Ececutive funtion (>1):FamilyHISTORY",
-          #                 "depression","Executive function (<1):depression","Ececutive funtion (>1):depression"),
           file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive.html")
 TwoVarEx
 
@@ -159,26 +134,6 @@ fulltabEX<-tab_model(Fullmodelex, title = "Relation between ECog and executive f
           dv.labels = c("full Model"),
           digits = 3,
           ci.hyphen = ", ",
-          # pred.labels = c("(Intercept)",
-          #                 "Executive function <1",
-          #                 "Executive function >1",
-          #                 "AGE_centered at 75 by decade",
-          #                 "language(Spanish)",
-          #                 "Asian",
-          #                 "Black",
-          #                 "Latino",
-          #                 "GENDER(Male)",
-          #                 "YearsEDUCATION",
-          #                 "FamilyHISTORY",
-          #                 "depression",
-          #                 "Executive function (<1):AGE","Ececutive funtion (>1):AGE",
-          #                 "Executive function (<1):Asian","Ececutive funtion (>1):Asian",
-          #                 "Executive function (<1):Black","Ececutive funtion (>1):Black",
-          #                 "Executive function (<1):Latino","Ececutive funtion (>1):Latino",
-          #                 "Executive function (<1):GENDER(Male)","Ececutive funtion (>1):GENDER(Male)",
-          #                 "Executive function (<1):YearsEDUCATION","Ececutive funtion (>1):YearsEDUCATION",
-          #                 "Executive function (<1):FamilyHISTORY","Ececutive funtion (>1):FamilyHISTORY",
-          #                 "Executive function (<1):depression","Ececutive funtion (>1):depression"),
           file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive.html")                     
 fulltabEX
 
@@ -201,9 +156,9 @@ DFex <-  DF[,c("logEcog12","ex_function","AGE_75_d","race","GENDER","yrEDU","F_H
 BASEex_nospline <- "logEcog12 ~ ex_function*AGE_75_d " #it is not necessary to specify memory or age alone because they need to be estimated anyways to get estimates for the inteaction term
 interactions_ex_nospline <- c(BASEex_nospline, "ex_function*race", "ex_function*GENDER","ex_function*yrEDU + ex_function*race","ex_function*F_Hist","ex_function*depression_01","ex_function*yrEDU")
 
-
-BASEmod_ex_nospline <- lm(BASEex_nospline,data = DFex)
-basetabex_nospline<-tab_model(BASEmod_ex_nospline, title = "Relation between ECog and executive function", 
+results_execfun_nospline<-list()
+results_execfun_nospline[[1]] <- lm(BASEex_nospline,data = DFex)
+basetabex_nospline<-tab_model(results_execfun_nospline[[1]], title = "Relation between ECog and executive function", 
                      auto.label = T,
                      dv.labels = "Base model logEcog",
                      digits = 3,
@@ -218,10 +173,10 @@ for(t in 1:6){
 }
 
 
-results_execfun_nospline<-list()
+
 for (i in 1:length(modlistex)) {
   model<- lm(data = DFex, formula = modlistex_nospline[[i]])
-  results_execfun_nospline[[i]] <- model
+  results_execfun_nospline[[i+1]] <- model
 }
 TwoVarEx_NS<-tab_model(results_execfun_nospline, title = "Relation between ECog and executive function",
                     auto.label = T,
