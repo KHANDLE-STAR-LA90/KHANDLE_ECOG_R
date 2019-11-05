@@ -120,8 +120,7 @@ for (col in 2:nc){
 }
 
 # PLEASE SET THE PATH TO THE RESULTS HERE (this file will be created later)
-path2pdf <-"C:\\Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/
-All_variables_figures.pdf"
+path2pdf <-"All_variables_figures_first_glance.pdf"
 #
 # Running the function:
 if(make.plot.pdf==1){
@@ -341,7 +340,7 @@ DF <- cbind(DF,missing_Ecog)
 #              xlim = c(min(x),max(x)),
 #              ylim = c(min(y),max(y)))
 
-points(x,y)
+#points(x,y)
 # ###############################################################
 
 
@@ -401,7 +400,6 @@ DF<-DF[-which(is.na(DF$depression_01)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$depression_01)),]
 
 
-## saving the final version of the data tables
-#write.csv(DF, "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/DF.csv")
+## saving the final version of the data tables (OUTSIDE OF THE GIT REPO)
 write.csv(raw_data_averages, "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")
 
