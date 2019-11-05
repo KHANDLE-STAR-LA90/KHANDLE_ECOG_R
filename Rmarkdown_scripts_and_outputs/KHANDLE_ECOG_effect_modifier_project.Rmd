@@ -20,7 +20,7 @@ require(ggplot2)
 require(reshape2)
 require(knitr)
 require(kableExtra)
-source("/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Khande_data_engineering.R")
+source("../Khande_data_engineering.R")
 ```
 
 
@@ -87,7 +87,7 @@ For the other education levels (with college attendance) coded in the variable *
   * If **EDUCATION = 5** then Years of education = 20 (PHD or equivalent)
 
 ```{r}
-EDUCyr_table <- read.csv("./../Edu_recode.csv",header = F)
+EDUCyr_table <- read.csv("../Edu_recode.csv",header = F)
 colnames(EDUCyr_table)<-c("Type of diploma", "coded as (in years)")
 #kable(EDUCyr_table)
 ```
@@ -131,9 +131,9 @@ kable( FamilyH,row.names =F)%>%
 
 
 ```{r}
-source('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Make_table1.R')
+source('../Make_table1.R')
 knitr::opts_chunk$set(echo = F, cache = F, warning=FALSE, message=FALSE)
-read_chunk('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Make_table1.R')
+read_chunk('../Make_table1.R')
 ```
 
 ```{r Prepare_Data, echo=FALSE, include=FALSE}
@@ -198,7 +198,7 @@ The Model as stated in 5.3 assumes linear relationships between SENAS and Ecog. 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = F, cache = F, warning=FALSE, message=FALSE)
-read_chunk('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Plotting.R')
+read_chunk('../Plotting_loess.R')
 ```
 
 
@@ -230,7 +230,7 @@ So in the following analysis we will include two linear splines for this variabl
 ## Updated analytic approach
 
 ```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-source('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Statistical_analysis.R')
+source('../Statistical_analysis.R')
 #read_chunk('/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Statistical_analysis.R')
 ```
 We will sequentially analyse the consequtive models as follows:
@@ -263,8 +263,6 @@ Executive function:
 ## Episodic memory
 ### Base model
 #### regression results:
-Call:
-$statDFmem\$logEcog12 ~ statDFmem\$memory*statDFmem\$AGE$
 
 Output:
 
@@ -482,7 +480,7 @@ Ed
 
 ```
 
-```{r}
+```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=T}
 ###########################  EDUCATION UNCORRECTED  ##########################
 #education
 xed<- rep(predrange,3)
@@ -493,7 +491,7 @@ newDFedu <- data.frame(
 
 predgged <- predict(memfit[[6]],
                   newDFedu, interval = "conf")
-Ed_uncorr <- ggplot(data = newDFedu)+ 
+Ed_uncorr <- ggplot(data = newDFedu)+ ggtitle("Modifier education (not adjusted for race)")+
   geom_ribbon(aes(xed,ymin=predgged[,2],ymax=predgged[,3],group=factor(yrEDU),fill=factor(yrEDU)),alpha=0.15) +
   geom_line(aes(xed,predgged[,1],color=factor(yrEDU),linetype=factor(yrEDU)),size=1) + 
   theme_minimal() +
