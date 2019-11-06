@@ -27,7 +27,11 @@ DFmem <- data.frame(DFmem)
 BASEmem <- "logEcog12 ~ memory*AGE_75_d " #it is not necessary to specify memory or age alone because they need to be estimated anyways to get estimates for the inteaction term
 interactions <- c(BASEmem, "memory*race", "memory*GENDER","memory*yrEDU + memory*race","memory*F_Hist","memory*depression_01","memory*yrEDU")
 length(interactions)
+
+# estimating the models (+one where educ is not adjusted for race) 
+#and adding them to a list called memfit
 memfit <- list()
+
 memfit[[1]] <- lm(data = DFmem,formula = BASEmem)
 
 
@@ -36,9 +40,7 @@ baseTabmem <- tab_model(memfit[[1]],
           auto.label = T,
           dv.labels = "Base model logEcog",
           digits = 3,
-          #pred.labels = c("(Intercept)","memory","Age_centered_75_decades","language(Spanish)","memory:Age_cent_75_decades"),
           file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_memory.html")
-#save_kable(base_tbl_mem,"/Users/fcorlier/Box Sync/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Base_model_memory.html")
 baseTabmem
 
 mem <- list()
@@ -50,8 +52,7 @@ mem[[4]] <-paste(BASEmem, " + ", interactions[5])
 mem[[5]] <-paste(BASEmem, " + ", interactions[6])
 mem[[6]] <-paste(BASEmem, " + ", interactions[7])
 
-# estimating the 5 models (+one where educ is not adjusted for race) 
-#and adding them to a list called memfit
+#adding to memfit
 for(n in 1:6){
 memfit[[n+1]]<- lm(data = DFmem, formula = mem[[n]])
 }
@@ -116,7 +117,7 @@ for(t in 1:6){
 
 
 for (i in 1:length(modlistex)) {
-  model<- lm(data = DFex, formula = modlistex[[i]])
+  model<- glm(data = DFex, formula = modlistex[[i]])
   results_execfun[[i+1]] <- model
 }
 TwoVarEx<-tab_model(results_execfun, title = "Relation between ECog and executive function",
