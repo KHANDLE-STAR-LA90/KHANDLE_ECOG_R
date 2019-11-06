@@ -396,6 +396,30 @@ e
 f
 ```
 
+
+```{r}
+tiff("./Figure2a.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(a,ncol = 1)
+dev.off()
+tiff("./Figure2b.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(b,ncol = 1)
+dev.off()
+tiff("./Figure2c.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(c,ncol = 1)
+dev.off()
+tiff("./Figure2d.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(d,ncol = 1)
+dev.off()
+tiff("./Figure2e.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(e,ncol = 1)
+dev.off()
+tiff("./Figure2f.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(f,ncol = 1)
+dev.off()
+```
+
+
+
 #### Predicted values plots
 ```{r,fig.show="hold", out.width="100%",cache=FALSE}
 knitr::include_graphics('./Figure2_ggarange.tiff')
@@ -453,6 +477,9 @@ table(raw_data_averages$language,raw_data_averages$race, useNA = "ifany")
 ```
 
 ##removing the knot
+```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
+source('../plotting_NO_knot.R')
+```
 
 ```{r}
 require(ggpubr)
@@ -475,6 +502,28 @@ ggarrange(
   nrow = 3)
 dev.off()
 ```
+
+```{r, include=F, message=F}
+tiff("./Figure3a.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(a,ncol = 1)
+dev.off()
+tiff("./Figure3b.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(b,ncol = 1)
+dev.off()
+tiff("./Figure3c.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(c,ncol = 1)
+dev.off()
+tiff("./Figure3d.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(d,ncol = 1)
+dev.off()
+tiff("./Figure3e.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(e,ncol = 1)
+dev.off()
+tiff("./Figure3f.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(f,ncol = 1)
+dev.off()
+```
+
 
 ```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=T}
 a
