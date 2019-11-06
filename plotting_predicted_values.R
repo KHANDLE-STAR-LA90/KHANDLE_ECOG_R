@@ -6,16 +6,12 @@
 #define the range of values from memory or Executive function for which to predict ECog
 predrange<-c(-1.5,-1,0,0.5,1,2,2.5)
 
-#create a list of lists of the models outputed in "statistical analysis"
-listofmodels<-list()
-listofmodels[[1]]<-memfit
-listofmodels[[2]]<-results_execfun
-listofmodels[[3]]<-results_execfun_nospline
+require(ggformula)
 
 FigureList<-list()
-
-for (M in 1:3){
-  modelList<-listofmodels[[M]]
+#below I'm generating hypothetical data for 3 different scenarios 
+#(memory, executive function (with spline), and exec without spline)
+for (M in c(1,2)){
   
   if(M==1){
     xlab="Episodic memory"
@@ -68,8 +64,23 @@ newDFdepr <- data.frame(
   AGE_75_d=rep(c(0),each=21),
   depression_01=rep(c(-1,0,1),each=7))
 
+predggba <- predict.lm(memfit[[1]],
+                    newDFage, interval = "conf")
+predggra <- predict.lm(memfit[[2]],
+                    newDFrace, interval = "conf")
+predggge <- predict.lm(memfit[[3]],
+                    newDFgender, interval = "conf")
+predgged <- predict.lm(memfit[[4]],
+                    newDFedu, interval = "conf")
+predggfh <- predict.lm(memfit[[5]],
+                    newDFfhist, interval = "conf")
+predggdpr <- predict.lm(memfit[[6]],
+                     newDFdepr, interval = "conf")
+
   }
-  else{
+  
+  if(M==2){
+    print(" *****************   M is 2 ******************************")
     xlab<-"Executive function"
     ########################################################################
     #base model: 
@@ -110,7 +121,7 @@ newDFdepr <- data.frame(
     newDFfhist <- data.frame(
       ex_function=xfh,
       AGE_75_d=rep(c(0),each=14),
-      F_Hist=rep(c(0,1),each=7))#,
+      F_Hist=rep(c(0,1),each=7))
     
     ########################################################################
     #depression
@@ -118,27 +129,31 @@ newDFdepr <- data.frame(
     newDFdepr <- data.frame(
       ex_function=xdpr,
       AGE_75_d=rep(c(0),each=21),
-      depression_01=rep(c(-1,0,1),each=7))#,
+      depression_01=rep(c(-1,0,1),each=7))
+    
+    predggba <- predict.lm(results_execfun[[1]],
+                        newDFage, interval = "conf")
+    predggra <- predict.lm(results_execfun[[2]],
+                        newDFrace, interval = "conf")
+    predggge <- predict.lm(results_execfun[[3]],
+                        newDFgender, interval = "conf")
+    predgged <- predict.lm(results_execfun[[4]],
+                        newDFedu, interval = "conf")
+    predggfh <- predict.lm(results_execfun[[5]],
+                        newDFfhist, interval = "conf")
+    predggdpr <- predict.lm(results_execfun[[6]],
+                         newDFdepr, interval = "conf")
   }
   
-  predggba <- predict(modelList[[1]],
-                      newDFage, interval = "conf")
-  predggra <- predict(modelList[[2]],
-                      newDFrace, interval = "conf")
-  predggge <- predict(modelList[[3]],
-                      newDFgender, interval = "conf")
-  predgged <- predict(modelList[[4]],
-                      newDFedu, interval = "conf")
-  predggfh <- predict(modelList[[5]],
-                      newDFfhist, interval = "conf")
-  predggdpr <- predict(modelList[[6]],
-                       newDFdepr, interval = "conf")
+  
+
 #########################################################################
 #########################################################################
 #GRAPHICS 
 #########################################################################
 #########################################################################
 #setting ploting parameters
+
 plots_list<-list()
 textSize <- 12
 PM<- margin(.2, 0.2, .2, .5, "cm")
@@ -175,7 +190,9 @@ Ba <- ggplot(data = newDFage)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-FigureList[[M*6-5]]<-Ba
+n<-(M*6)-5
+print(n)
+FigureList[[n]]<-Ba
 
 #race/ethnicity
 Ra<-ggplot(data = newDFrace)+
@@ -202,7 +219,10 @@ Ra<-ggplot(data = newDFrace)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-FigureList[[M*6-4]]<-Ra
+
+n<-(M*6)-4
+print(n)
+FigureList[[n]]<- Ra
 
 #gender
 Ge<-ggplot(data = newDFgender)+
@@ -234,7 +254,8 @@ Ge<-ggplot(data = newDFgender)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-FigureList[[M*6-3]]<-Ge
+n<-(M*6)-3
+FigureList[[n]]<-Ge
 
 #education duration
 Ed <- ggplot(data = newDFedu)+ 
@@ -265,7 +286,8 @@ Ed <- ggplot(data = newDFedu)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-FigureList[[M*6-2]]<-Ed
+n<-(M*6)-2
+FigureList[[n]]<-Ed
 
 #Family history of dementia
 Fh <- ggplot(data = newDFfhist)+
@@ -296,7 +318,8 @@ Fh <- ggplot(data = newDFfhist)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-FigureList[[M*6-1]]<-Fh
+n<-(M*6)-1
+FigureList[[n]]<-Fh
 
 #depressive symptoms
 Dpr <- ggplot(data = newDFdepr)+ 
@@ -325,6 +348,7 @@ Dpr <- ggplot(data = newDFdepr)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-FigureList[[M*6]]<-Dpr
+n <- M*6
+FigureList[[n]]<-Dpr
 
 }
