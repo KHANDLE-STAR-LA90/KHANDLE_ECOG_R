@@ -201,10 +201,7 @@ Ra<-ggplot(data = newDFrace)+
         plot.margin = PM)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE,
-         color=FALSE,
-         linetype=FALSE,
-         group=FALSE)
+  guides(fill = FALSE)
 FigureList[[M*6-4]]<-Ra
 
 #gender
@@ -236,10 +233,7 @@ Ge<-ggplot(data = newDFgender)+
   scale_color_discrete(name= "Gender", labels=c("Women","Men"))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE,
-         color=FALSE,
-         linetype=FALSE,
-         group=FALSE)
+  guides(fill = FALSE)
 FigureList[[M*6-3]]<-Ge
 
 #education duration
@@ -270,10 +264,7 @@ Ed <- ggplot(data = newDFedu)+
                           labels = c("8 ","12 ","16 "))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE,
-         color=FALSE,
-         linetype=FALSE,
-         group=FALSE)
+  guides(fill = FALSE)
 FigureList[[M*6-2]]<-Ed
 
 #Family history of dementia
@@ -304,10 +295,7 @@ Fh <- ggplot(data = newDFfhist)+
                           labels = c("yes","no"))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE,
-         color=FALSE,
-         linetype=FALSE,
-         group=FALSE)
+  guides(fill = FALSE)
 FigureList[[M*6-1]]<-Fh
 
 #depressive symptoms
@@ -336,10 +324,7 @@ Dpr <- ggplot(data = newDFdepr)+
   scale_color_discrete(name="Depressive symptoms")+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE,
-         color=FALSE,
-         linetype=FALSE,
-         group=FALSE)
+  guides(fill = FALSE)
 FigureList[[M*6]]<-Dpr
 
 }
