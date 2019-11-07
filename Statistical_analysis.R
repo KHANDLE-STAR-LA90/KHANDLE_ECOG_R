@@ -40,7 +40,7 @@ baseTabmem <- tab_model(memfit[[1]],
           auto.label = T,
           dv.labels = "Base model logEcog",
           digits = 3,
-          file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_memory.html")
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_memory.html")
 baseTabmem
 
 mem <- list()
@@ -63,7 +63,7 @@ TwoVarMem <-tab_model(memfit, title = "Multi model table memory",
           dv.labels = c("base","Base + race","base + Gender","Base + Education + race","Base + Family History","Base + depression","Base+Education"),
           digits = 3,
           ci.hyphen = ", ",
-          file = "Formated_regression_tables/2variable_models_memory.html")
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_memory.html")
 
 TwoVarMem
 
@@ -75,7 +75,7 @@ fullmem <- tab_model(fullModelfit, title = "Relation between ECog and memory all
           dv.labels = "Full model",
           digits = 3,
           ci.hyphen = ", ",
-          file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_memory.html")
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_memory.html")
 fullmem
 # ## @knitr stepwise-model-memory  
 # stepmodelmem <- MASS::stepAIC(BASEmod_mem, direction = "forward",scope = list(upper = fullModel, lower = BASEmod_mem))
@@ -105,7 +105,7 @@ basetabex<-tab_model(results_execfun[[1]], title = "Relation between ECog and ex
           dv.labels = "Base model logEcog",
           digits = 3,
           ci.hyphen = ", ",
-          file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive.html")
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive.html")
 basetabex
 
 modlistex<-list()
@@ -125,7 +125,7 @@ TwoVarEx<-tab_model(results_execfun, title = "Relation between ECog and executiv
           dv.labels = c("Base + Race/Ethnicity","Base + GENDER","Base + Education + race", "Base + Family history","Base + depression","Base + Education"),
           digits = 3,
           ci.hyphen = ", ",
-          file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive.html")
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive.html")
 TwoVarEx
 
 
@@ -135,7 +135,7 @@ fulltabEX<-tab_model(Fullmodelex, title = "Relation between ECog and executive f
           dv.labels = c("full Model"),
           digits = 3,
           ci.hyphen = ", ",
-          file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive.html")                     
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive.html")                     
 fulltabEX
 
 # ## @knitr stepwise-model-executive-function  
@@ -164,7 +164,7 @@ basetabex_nospline<-tab_model(results_execfun_nospline[[1]], title = "Relation b
                      dv.labels = "Base model logEcog",
                      digits = 3,
                      ci.hyphen = ", ",
-                     file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive_nospline.html")
+                     file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive_nospline.html")
 basetabex_nospline
 
 modlistex_nospline <- list()
@@ -184,7 +184,7 @@ TwoVarEx_NS<-tab_model(results_execfun_nospline, title = "Relation between ECog 
                     dv.labels = c("Base + Race/Ethnicity","Base + GENDER","Base + Education + race", "Base + Family history","Base + depression","Base + Education"),
                     digits = 3,
                     ci.hyphen = ", ",
-                    file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive_nospline.html")
+                    file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive_nospline.html")
 TwoVarEx_NS
 
 
@@ -194,6 +194,6 @@ fulltabEX_NS<-tab_model(Fullmodelex_NS, title = "Relation between ECog and execu
                      dv.labels = c("full Model"),
                      digits = 3,
                      ci.hyphen = ", ",
-                     file = "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive_nospline.html")                     
+                     file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive_nospline.html")                     
 fulltabEX_NS
 

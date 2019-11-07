@@ -363,9 +363,11 @@ raw_data_averages$Age_centered_75_decades <- raw_data_averages$Age_centered_75/1
 raw_data_averages$yrEDUCATION_centered <- scale(raw_data_averages$yrEDUCATION,center = 12, scale = FALSE)
 
 #Removing some missing data for key variables
-DF$race <- factor(DF$race)
+
 DF<-DF[-which(is.na(DF$logEcog12)),]
 DF<-DF[-which(is.na(DF$adj_verbal_episodic_mem)),]
+DF$race <- factor(DF$race)
+DF<-DF[-which(is.na(DF$race)),]
 DF$age <- as.numeric(DF$age)
 DF<-DF[-which(is.na(DF[,c("yrEDUCATION")])),]
 DF<-DF[-which(is.na(DF$depression_01)),]
