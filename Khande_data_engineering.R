@@ -5,22 +5,18 @@ require(haven)
 require(dplyr)
 require(ggplot2)
 require(reshape2)
-##loading the old data for comparison (for AGE, which for some reason is missing from the new dataset....)
-#W0<- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfer0_2019May/aaic_mariaglymour_20190507.sas7bdat")
-##loading depression scores
-#aaic_mariaglymour_20190821 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfer1_2019Aug/aaic_mariaglymour_20190821.sas7bdat")
+
 ##loading the new data
 w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfer4_2019Oct18/khandle_baseline_20191018.sas7bdat")
 
 raw_data_sas <- as.data.frame(w1)
-raw_data <- raw_data_sas
 
+#suppressing the variable GENDER (incomplete, we use D_GENDER that we rename just GENDER)
 raw_data_sas$W1_GENDER <- NULL
 
-#print the type of each variable and remove the "W1_" that precedes every variable name (except studyID)
+#remove the "W1_" that precedes every variable name (except studyID)
 for (n in 1:ncol(raw_data_sas)) {
   s<-colnames(raw_data_sas)[n]
-  print(paste0(s, " is detected as: ", typeof(raw_data_sas[,n])))
   if( s !="STUDYID"){
     colnames(raw_data_sas)[n]<-substr(s,4,nchar(s))
   }
@@ -28,7 +24,6 @@ for (n in 1:ncol(raw_data_sas)) {
 
 #Renaming some variables (some names have changed in the new data)
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="D_RACE_SUMMARY")]<-"race"
-#colnames(raw_data_sas)[which(colnames(raw_data_sas)=="D_EDUCATION")]<-"EDUCATION" #not used
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="EDU_EDUCATION")]<-"EDUCATION"
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="EDU_LONGCERT")]<-"LONGCERT"
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="EDU_TRNCERT")]<-"TRNCERT"
@@ -37,7 +32,7 @@ colnames(raw_data_sas)[which(colnames(raw_data_sas)=="ECOG_CONCERNED_THINKING")]
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="NIHTLBX_depr_theta")]<-"depression_01"
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="INTERVIEW_AGE")]<-"age"
 colnames(raw_data_sas)[which(colnames(raw_data_sas)=="D_GENDER")]<-"GENDER"
-#colnames(raw_data_sas)[which(colnames(raw_data_sas)=="LANG")]<-"LANG"
+#renaming some levels within factors
 raw_data_sas[which(raw_data_sas[,"CONCERNED_THINKING"]==2),"CONCERNED_THINKING"] <- "No"
 raw_data_sas[which(raw_data_sas[,"CONCERNED_THINKING"]==1),"CONCERNED_THINKING"] <- "Yes"
 raw_data_sas[which(raw_data_sas[,"GENDER"]==2),"GENDER"] <- "Woman"
@@ -58,6 +53,7 @@ for (col in 2:nc) {
     raw_data_clean[raw_data_clean[,col]%in% 
                      c("",99.000,"99",999.00,"999",9999.00,"9999","N/A","Na",NaN,"NaN","Refused/Don't Know"),
                    col]<- NA
+    #if not age (some poeple may have age 88)
     if(colnames(raw_data_clean)[col]!="age"){
     raw_data_clean[raw_data_clean[,col] %in% 
                      c("Dk","DK","Don't know","?",88,"88",888,"888"),col]<- NA 
@@ -66,6 +62,8 @@ for (col in 2:nc) {
 
 raw_data_sas <- raw_data_clean
 ######################################################################
+#   @CRYSTAL: switch to line 135+ this part doesn't need review
+
 ## PLOTTING ALL THE VARIABLES FROM THE DATASET IN AN EXTERNAL PDF file 
 # this is just to have a first look at the data
 #(if make.plot.pdf = 0 it skips this step)
@@ -145,8 +143,6 @@ dev.off()
 #The corresponding long names are IN THE SAME ORDER)
 #I've left some identical when they aren't usefull
 
-##TEMPORARY FIX: WE DON'T HAVE THE SENAS FOR THE NEW DATASET SO WE USE THE OLD ONES
-
 short_names <-c("vm","vm_se","vmform","pa","pa_se","on","on_se","phon","phon_se",
                 "wm","wm_se","cat","cat_se","vrmem","sem","exec")
 
@@ -175,10 +171,6 @@ raw_data_clean[which(raw_data_clean[,"race"]=="LatinX"),"race"] <- "Latino"
 raw_data_clean[which(raw_data_clean[,"race"]=="AfrAmer"),"race"] <- "Black"
 raw_data_clean[which(raw_data_clean[,"race"]=="Native American"),"race"] <- NA
 raw_data_clean[which(raw_data_clean[,"race"]=="Refused/Missing"),"race"] <- NA
-
-
-
-
 
 #Concernerd thinking
 raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==1),"CONCERNED_THINKING"] <- "Yes"
@@ -220,16 +212,13 @@ raw_data_averages <- raw_data_clean
 # if TRNCERT=2 and LONGCERT=4, then TRUE_CERT=1 (otherwise 0)
 
 #creating the column
- raw_data_averages$yrEDUCATION <- raw_data_averages$EDUCATION
-# raw_data_averages$EDUCATION_TEXT[which(raw_data_averages$EDUCATION_TEXT==99)] <- NA
-# raw_data_averages$EDUCATION_TEXT[which(raw_data_averages$EDUCATION_TEXT==88)] <- NA
+raw_data_averages$yrEDUCATION <- raw_data_averages$EDUCATION
+
 raw_data_averages$TRUECERT <- factor(
   ifelse(raw_data_averages[,"TRNCERT"]==2 &
            raw_data_averages[,"LONGCERT"]==4,
          1,0))
 raw_data_averages$TRUECERT[which(raw_data_averages$TRUECERT==99)] <- NA
-# raw_data_averages$EDUCATION[which(raw_data_averages$EDUCATION==99)] <- NA
-# raw_data_averages$EDUCATION[which(raw_data_averages$EDUCATION==88)] <- NA
 
 # number of years of education = EDUCATION_TEXT 
 #when they did not attend college (EDUCATION=0)
@@ -253,9 +242,6 @@ raw_data_averages[
         raw_data_averages$EDUCATION==0 &
           raw_data_averages$TRUECERT==1),
       "yrEDUCATION"])+1
-                    
-# raw_data_averages$EDUCATION[which(raw_data_averages$yrEDUCATION==99)] <- NA
-# raw_data_averages$EDUCATION[which(raw_data_averages$yrEDUCATION==88)] <- NA
 
 raw_data_averages[
   which(raw_data_averages[,"EDUCATION"]==1),
@@ -279,9 +265,9 @@ raw_data_averages[
 
 raw_data_averages$yrEDUCATION <- as.numeric(raw_data_averages$yrEDUCATION)
 table(raw_data_averages$EDUCATION,raw_data_averages$yrEDUCATION,useNA = "ifany")
-#######################################################################################
-
+################################################################################
 ## Coding family history
+################################################################################
 
 ## @knitr Family_history
 
@@ -296,39 +282,67 @@ for (n in 1:14) {
                                  ifelse(raw_data_averages[,v]==0,0,NA))
 }
 
-raw_data_averages$PARENTAL_DEMENTIA <- rowSums(raw_data_averages[,c("REL_DEMENTIA_1","REL_DEMENTIA_2")],na.rm = T)
-raw_data_averages$SIBLING_DEMENTIA <- rowSums(raw_data_averages[,c(paste0("REL_DEMENTIA_",3:14))],na.rm = T)
+#summing the number of parents(REL_DEMENTIA 1 and 2), or siblings (3 to 14) have dementia
+raw_data_averages$PARENTAL_DEMENTIA <- 
+  rowSums(raw_data_averages[,c("REL_DEMENTIA_1","REL_DEMENTIA_2")],na.rm = T)
+raw_data_averages$SIBLING_DEMENTIA <- 
+  rowSums(raw_data_averages[,c(paste0("REL_DEMENTIA_",3:14))],na.rm = T)
 #does any relative have dementia ?
-raw_data_averages$RELATIVE_DEMENTIA <- ifelse(rowSums(raw_data_averages[,c("PARENTAL_DEMENTIA","SIBLING_DEMENTIA")],na.rm = T)>0,1,0)
+raw_data_averages$RELATIVE_DEMENTIA <- 
+  ifelse(rowSums(raw_data_averages[,c("PARENTAL_DEMENTIA","SIBLING_DEMENTIA")],na.rm = T)>0,1,0)
 #do more than one relative have dementia?
-raw_data_averages$RELATIVE_DEMENTIA2plus <- ifelse(rowSums(raw_data_averages[,c("PARENTAL_DEMENTIA","SIBLING_DEMENTIA")],na.rm = T)>1,1,0)
+raw_data_averages$RELATIVE_DEMENTIA2plus <- 
+  ifelse(rowSums(raw_data_averages[,c("PARENTAL_DEMENTIA","SIBLING_DEMENTIA")],na.rm = T)>1,1,0)
 
 
-# nc<-ncol(raw_data_averages)
-# for (col in 2:nc) {
-#   raw_data_averages[which(as.numeric(raw_data_averages[,col])%in% c("",99,"99",999,"999",9999,"9999","N/A","Na")),col]<- NA
-#   if(colnames(raw_data_averages)[col]!="collapsed_age"){
-#     raw_data_averages[which(raw_data_averages[,col] %in% c("Dk","DK","Don't know","?",88,"88",888,"888")),col]<- NA 
-#   }
-# }
 
-ListOfVars <- c("semantic_memory","adj_verbal_episodic_mem","executive_function","age","GENDER","race","CONCERNED_THINKING","EDUCATION","yrEDUCATION",Ecog_12items, "RELATIVE_DEMENTIA","SIBLING_DEMENTIA","PARENTAL_DEMENTIA","language","depression_01")
+ListOfVars <- c("semantic_memory",
+                "adj_verbal_episodic_mem",
+                "executive_function",
+                "age",
+                "GENDER",
+                "race",
+                "CONCERNED_THINKING",
+                "EDUCATION",
+                "yrEDUCATION",
+                Ecog_12items,
+                "RELATIVE_DEMENTIA",
+                "SIBLING_DEMENTIA",
+                "PARENTAL_DEMENTIA",
+                "language",
+                "depression_01")
 DF<-raw_data_averages[,ListOfVars]
-# for (n in ListOfVars) {
-#   DF[which(DF[,n]==99),n]<-NA
-#   
-# }
+
 ##############################################################################
+#COUNTING HOW MANY ECOG ITEMS (individual questions) ARE MISSING PER PARTICIPANT
 #Creating indicator variables to account for patients with missing values at the Ecog
 #creating variable names:
 Ecog12_indicator_variables <- paste0(Ecog_12items,"ind")
 
-#creating the empty dataframe
+#creating the empty dataframe and fusing it to the DF 
 missing_Ecog <- data.frame(matrix(ncol =12 , nrow = nrow(DF)))
 colnames(missing_Ecog)<-Ecog12_indicator_variables
 DF <- cbind(DF,missing_Ecog)
+
+#Counting missing data
+for (i in Ecog_12items) {
+DF[,paste0(i,"ind")]   <- ifelse(is.na(DF[,i]),1,0)
+}
+DF$Ecog12_missing <- rowSums(DF[,Ecog12_indicator_variables])
+
+#creating a variable that includes partial Ecog data (=with some missing items)
+DF$Ecog12_including_partial_averages<-rep(NA)
+DF$Ecog12_including_partial_averages=rowMeans(DF[,Ecog_12items], na.rm=TRUE)
+
+#if all 12 items are missing(=NA) otherwise indicate how many are missing
+DF$Ecog12_missing <- ifelse(DF$Ecog12_missing==12,NA,DF$Ecog12_missing)
+
+#add those 2 new columns to the main datatable
+raw_data_averages$Ecog12_including_partial_averages <- DF$Ecog12_including_partial_averages
+raw_data_averages$Ecog12_missing <- DF$Ecog12_missing
+
 ##############################################################
-# #creating a special binary variable of poeple that have SCD
+# #creating a special binary variable of poeple that have SCD (experimental)
 # binary_SCD <- ifelse(DF[,Ecog_12items]>2,1,0)
 # binary_SCD$sumSCD<- rowSums(binary_SCD,na.rm = T)
 # binary_SCD$binSCD <- ifelse(binary_SCD$sumSCD>0,1,0)
@@ -336,49 +350,11 @@ DF <- cbind(DF,missing_Ecog)
 # DF$binSCD <- binary_SCD$binSCD
 # DF$sumSCD <- binary_SCD$sumSCD
 # ###############################################################
-# y<- DF$sumSCD
-# x<- DF$adj_verbal_episodic_mem
-# mRCS<- glm(y~rms::rcs(x,quantile(x,c(0,.05,.275,.5,.775,.95,1),include.lowest=T,na.rm = T))+DF$age + DF$yrEDUCATION)
-# mLR <- glm(y~x+DF$age + DF$yrEDUCATION, family = "binomial")
-# plot(x,mRCS$fitted.values,
-#              col = "red",
-#              xlim = c(min(x),max(x)),
-#              ylim = c(min(y),max(y)))
-
-#points(x,y)
-# ###############################################################
-
-
-
-
-for (i in Ecog_12items) {
-DF[,paste0(i,"ind")]   <- ifelse(is.na(DF[,i]),1,0)
-}
-
-DF$Ecog12_missing <- rowSums(DF[,Ecog12_indicator_variables])
-
-#creating a variable that includes partial Ecog data (=with some missing items)
-DF$Ecog12_including_partial_averages<-rep(NA)
-
-DF$Ecog12_including_partial_averages=rowMeans(DF[,Ecog_12items], na.rm=TRUE)
-
-#if all 12 items are missing=NA otherwise indicate how many are missing
-DF$Ecog12_missing <- ifelse(DF$Ecog12_missing==12,NA,DF$Ecog12_missing)
-
-#add those 2 new columns to the main datatable
-raw_data_averages$Ecog12_including_partial_averages <- DF$Ecog12_including_partial_averages
-raw_data_averages$Ecog12_missing <- DF$Ecog12_missing
-
 ################################################################################
-
-#at some point I had 99 and 88 removed but sometimes those anoying codes re-appear
-raw_data_averages[which(raw_data_averages$Ecog12_including_partial_averages==99),"Ecog12_including_partial_averages"]<-NA
-raw_data_averages[which(raw_data_averages$Ecog12_including_partial_averages==88),"Ecog12_including_partial_averages"]<-NA
-DF$Ecog12_including_partial_averages <- ifelse(DF$Ecog12_including_partial_averages=="NaN",NA,DF$Ecog12_including_partial_averages)
 
 #creating a log-transformed ECog12
 DF$logEcog12 <- log(DF$Ecog12_including_partial_averages)
-DF$logEcog12 <- ifelse(DF$logEcog12=="NaN",NA,DF$logEcog12)
+#DF$logEcog12 <- ifelse(DF$logEcog12=="NaN",NA,DF$logEcog12)
 raw_data_averages$logEcog12 <- log(raw_data_averages$Ecog12_including_partial_averages)
 
 #creating a centered age and a centered age in decades(because effect sizes for 1 year are too small)
@@ -391,17 +367,14 @@ DF$race <- factor(DF$race)
 DF<-DF[-which(is.na(DF$logEcog12)),]
 DF<-DF[-which(is.na(DF$adj_verbal_episodic_mem)),]
 DF$age <- as.numeric(DF$age)
-#DF<-DF[-which(is.na(DF[,c("race")])),]
 DF<-DF[-which(is.na(DF[,c("yrEDUCATION")])),]
 DF<-DF[-which(is.na(DF$depression_01)),]
-#DF<-DF[-which(is.na(DF[,c("GENDER")])),]
+
 
 #same for raw_data_avg
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$logEcog12)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$adj_verbal_episodic_mem)),]
-# raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$race)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$yrEDUCATION)),]
-# raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$GENDER)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$depression_01)),]
 
 
