@@ -20,30 +20,22 @@ DF$race <- relevel(DF$race, ref = "Non-Latino-White")
 DF$GENDER <- relevel(DF$GENDER, ref = "Woman")
 
 ## creating a short dataset for "memory" (Statics dataframe mem)
-
 DFmem <- DF[,c("logEcog12","memory","AGE_75_d","race","GENDER","yrEDU","F_Hist","depression_01")]
 DFmem <- data.frame(DFmem)
 
-BASEmem <- "logEcog12 ~ memory*AGE_75_d " #it is not necessary to specify memory or age alone because they need to be estimated anyways to get estimates for the inteaction term
-interactions <- c(BASEmem, "memory*race", "memory*GENDER","memory*yrEDU + memory*race","memory*F_Hist","memory*depression_01","memory*yrEDU")
-length(interactions)
 
-# estimating the models (+one where educ is not adjusted for race) 
+# creating a list of models (mem)
+# estimating the models  
 #and adding them to a list called memfit
+mem <- list()
 memfit <- list()
+
+BASEmem <- "logEcog12 ~ memory*AGE_75_d " #it is not necessary to specify memory or age alone (main effects) because they need to be estimated anyways to get estimates for the inteaction term
+interactions <- c(BASEmem, "memory*race", "memory*GENDER","memory*yrEDU + memory*race","memory*F_Hist","memory*depression_01","memory*yrEDU")
 
 memfit[[1]] <- lm(data = DFmem,formula = BASEmem)
 
 
-baseTabmem <- tab_model(memfit[[1]],
-          title = "Relation between ECog and memory", 
-          auto.label = T,
-          dv.labels = "Base model logEcog",
-          digits = 3,
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_memory.html")
-baseTabmem
-
-mem <- list()
 
 mem[[1]] <-paste(BASEmem, " + ", interactions[2])
 mem[[2]] <-paste(BASEmem, " + ", interactions[3])
@@ -57,29 +49,21 @@ for(n in 1:6){
 memfit[[n+1]]<- lm(data = DFmem, formula = mem[[n]])
 }
 
-
-TwoVarMem <-tab_model(memfit, title = "Multi model table memory", 
+#creating a result table
+TwoVarMem <-tab_model(memfit, title = "Relation between ECog and memory", 
           auto.label = T,
-          dv.labels = c("base","Base + race","base + Gender","Base + Education + race","Base + Family History","Base + depression","Base+Education"),
+          dv.labels = c("Modifier: age","Modifier race/ethnicity","Modifier: Gender","Modifier Education (+ race))","modifier: Family History","Modifier: depression","Modifier: Education"),
           digits = 3,
           ci.hyphen = ", ",
           file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_memory.html")
 
 TwoVarMem
 
-fullModel <- paste0(interactions, collapse = " + ")
-fullModelfit <- lm(fullModel,data = DFmem)
 
-fullmem <- tab_model(fullModelfit, title = "Relation between ECog and memory all covariates", 
-          auto.label = T,
-          dv.labels = "Full model",
-          digits = 3,
-          ci.hyphen = ", ",
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_memory.html")
-fullmem
 # ## @knitr stepwise-model-memory  
+# fullModel <- paste0(interactions, collapse = " + ")
 # stepmodelmem <- MASS::stepAIC(BASEmod_mem, direction = "forward",scope = list(upper = fullModel, lower = BASEmod_mem))
-# #summary(stepmodelmem)
+# summary(stepmodelmem)
 ##########################################################################################################################
 
 ##########################################################################################################################
@@ -99,15 +83,10 @@ BASEex <- "logEcog12 ~ I(lspline(ex_function, knots =1))*AGE_75_d " #it is not n
 interactionsex <- c(BASEex, "I(lspline(ex_function, knots =1))*race", "I(lspline(ex_function, knots =1))*GENDER","I(lspline(ex_function, knots =1))*yrEDU + I(lspline(ex_function, knots =1))*race","I(lspline(ex_function, knots =1))*F_Hist","I(lspline(ex_function, knots =1))*depression_01","I(lspline(ex_function, knots =1))*yrEDU")
 
 results_execfun<-list()
-results_execfun[[1]] <- lm(BASEex,data = DF1)
-basetabex<-tab_model(results_execfun[[1]], title = "Relation between ECog and executive function", 
-          auto.label = T,
-          dv.labels = "Base model logEcog",
-          digits = 3,
-          ci.hyphen = ", ",
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive.html")
-basetabex
 
+results_execfun[[1]] <- lm(BASEex,data = DF1)
+
+#make a list of model formulas
 modlistex<-list()
 for(t in 1:6){
   print(t)
@@ -115,32 +94,23 @@ for(t in 1:6){
 }
 
 
-
+#estimate the models and store them in results_execfun
 for (i in 1:length(modlistex)) {
   model<- glm(data = DFex, formula = modlistex[[i]])
   results_execfun[[i+1]] <- model
 }
+
+#creating a result table
 TwoVarEx<-tab_model(results_execfun, title = "Relation between ECog and executive function",
           auto.label = T,
-          dv.labels = c("Base + Race/Ethnicity","Base + GENDER","Base + Education + race", "Base + Family history","Base + depression","Base + Education"),
+          dv.labels = c("Modifier: AGE","Modifier: Race/Ethnicity","Modifier: GENDER","Modifier: Education", "Modifier: Family history","Modifier: depression","Modifier: education"),
           digits = 3,
           ci.hyphen = ", ",
           file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive.html")
 TwoVarEx
 
 
-## @knitr full-model-executive-function  
-Fullmodelex <- glm(formula = paste0(interactionsex, collapse = " + "),data = DFex )
-fulltabEX<-tab_model(Fullmodelex, title = "Relation between ECog and executive function",          auto.label = T,
-          dv.labels = c("full Model"),
-          digits = 3,
-          ci.hyphen = ", ",
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive.html")                     
-fulltabEX
 
-# ## @knitr stepwise-model-executive-function  
-#  stepmodelex <- MASS::stepAIC(BASEmod_ex, direction = "forward",scope = list(upper = Fullmodelex, lower = BASEmod_ex),trace = F)
-#  summary(Fullmodelex)
 
 #*****************************************************************************
 #*****************************************************************************
@@ -188,12 +158,5 @@ TwoVarEx_NS<-tab_model(results_execfun_nospline, title = "Relation between ECog 
 TwoVarEx_NS
 
 
-## @knitr full-model-executive-function  
-Fullmodelex_NS <- glm(formula = paste0(interactions_ex_nospline, collapse = " + "),data = DFex )
-fulltabEX_NS<-tab_model(Fullmodelex_NS, title = "Relation between ECog and executive function",          auto.label = T,
-                     dv.labels = c("full Model"),
-                     digits = 3,
-                     ci.hyphen = ", ",
-                     file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/full_model_executive_nospline.html")                     
-fulltabEX_NS
+
 

@@ -5,7 +5,7 @@
 
 #define the range of values from memory or Executive function for which to predict ECog
 #In some cases I use specific ranges to dismiss parts at which the data is sparse (e.g at exec function>1.5 for age=85)
-predrange<-c(-1.5,-1,0,0.5,1,2,2.5)
+predrange<-c(-2.5,-1,0,0.5,1,2,2.5)
 
 require(ggformula)
 
@@ -44,6 +44,7 @@ newDFgender <- data.frame(
 ########################################################################
 ##education
 xed<- rep(predrange,3)
+
 newDFedu <- data.frame(
   memory=xed,
   ex_function=xed,
@@ -113,12 +114,15 @@ xlab="Episodic memory"
 #plots for episodic memory
 #base model with age only
 
-Ba_mem <- ggplot(data = newDFage)+
-  geom_ribbon(aes(xba,ymin=predggba_mem[,2],ymax=predggba_mem[,3],
+#setting range to accomodate datasparsity
+
+newDFageM<-cbind(newDFage,predggba_mem)
+Ba_mem <- ggplot(data = newDFageM[1:20,])+
+  geom_ribbon(aes(memory ,ymin=lwr,ymax=upr,
                   group=factor(AGE_75_d,levels = c(1,0,-1)),
                   fill=factor(AGE_75_d,levels = c(1,0,-1))),
               alpha=0.15)+
-  geom_line(aes(xba,predggba_mem[,1],
+  geom_spline(aes(memory ,fit,
                 color=factor(AGE_75_d,
                              levels = c(1,0,-1)),
                 linetype=factor(AGE_75_d,
@@ -144,6 +148,7 @@ Ba_mem <- ggplot(data = newDFage)+
 FigureList[[1]]<-Ba_mem
 
 #race/ethnicity
+
 Ra_mem<-ggplot(data = newDFrace)+
   geom_ribbon(aes(xre,ymin=predggra_mem[,2],ymax=predggra_mem[,3],
                   group=race,fill=race),
@@ -206,12 +211,14 @@ Ge_mem<-ggplot(data = newDFgender)+
 FigureList[[3]]<-Ge_mem
 
 #education duration
-Ed_mem <- ggplot(data = newDFedu)+ 
-  geom_ribbon(aes(xed,ymin=predgged_mem[,2],ymax=predgged_mem[,3],
+range<-c(1:5,8:21)
+newDFeduM<-cbind(newDFedu,predgged_mem)
+Ed_mem <- ggplot(data = newDFeduM[range,])+ 
+  geom_ribbon(aes(xed[range],ymin=lwr,ymax=upr,
                   group=factor(yrEDU),
                   fill=factor(yrEDU)),
               alpha=0.15) +
-  geom_line(aes(xed,predgged_mem[,1],
+  geom_line(aes(xed[range],fit,
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
             size=1) + 
@@ -307,12 +314,14 @@ FigureList[[6]]<-Dpr_mem
 xlab<-"Executive function"
 
 #base model with age only
-Ba <- ggplot(data = newDFage)+
-  geom_ribbon(aes(xba,ymin=predggba[,2],ymax=predggba[,3],
+newDFage<-cbind(newDFage,predggba)
+range<-c(1:20)
+Ba <- ggplot(data = newDFage[range,])+
+  geom_ribbon(aes(ex_function,ymin=lwr,ymax=upr,
                   group=factor(AGE_75_d,levels = c(1,0,-1)),
                   fill=factor(AGE_75_d,levels = c(1,0,-1))),
               alpha=0.15)+
-  geom_line(aes(xba,predggba[,1],
+  geom_spline(aes(ex_function,fit,
                 color=factor(AGE_75_d,
                              levels = c(1,0,-1)),
                 linetype=factor(AGE_75_d,
@@ -334,15 +343,16 @@ Ba <- ggplot(data = newDFage)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-
+Ba
 FigureList[[7]]<-Ba
 
 #race/ethnicity
-Ra<-ggplot(data = newDFrace)+
-  geom_ribbon(aes(xre,ymin=predggra[,2],ymax=predggra[,3],
+newDFrace<-cbind(newDFrace,predggra)
+Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
+  geom_ribbon(aes(ex_function,ymin=lwr,ymax=upr,
                   group=race,fill=race),
               alpha=0.15)+
-  geom_line(aes(xre,predggra[,1],
+  geom_line(aes(ex_function,fit,
                 color=race,
                 linetype=race),
             size=1)+ 
@@ -400,12 +410,14 @@ Ge<-ggplot(data = newDFgender)+
 FigureList[[9]]<-Ge
 
 #education duration
-Ed <- ggplot(data = newDFedu)+ 
-  geom_ribbon(aes(xed,ymin=predgged[,2],ymax=predgged[,3],
+newDFedu<-cbind(newDFedu,predgged)
+range<-c(1:5,8:21)
+Ed <- ggplot(data = newDFedu[range,])+ 
+  geom_ribbon(aes(ex_function,ymin=lwr,ymax=upr,
                   group=factor(yrEDU),
                   fill=factor(yrEDU)),
               alpha=0.15) +
-  geom_line(aes(xed,predgged[,1],
+  geom_spline(aes(ex_function,fit,
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
             size=1) + 
@@ -428,7 +440,7 @@ Ed <- ggplot(data = newDFedu)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-
+Ed
 FigureList[[10]]<-Ed
 
 #Family history of dementia
@@ -464,12 +476,13 @@ Fh <- ggplot(data = newDFfhist)+
 FigureList[[11]]<-Fh
 
 #depressive symptoms
-Dpr <- ggplot(data = newDFdepr)+ 
-  geom_ribbon(aes(xdpr,ymin=predggdpr[,2],ymax=predggdpr[,3],
+newDFdepr<-cbind(newDFdepr,predggdpr)
+Dpr <- ggplot(data = newDFdepr[1:20,])+ 
+  geom_ribbon(aes(ex_function,ymin=lwr,ymax=upr,
                   group=factor(depression_01,levels = c(1,0,-1)),
                   fill=factor(depression_01,levels = c(1,0,-1))),
               alpha=0.15) + 
-  geom_line(aes(xdpr,predggdpr[,1],
+  geom_line(aes(ex_function,fit,
                 color=factor(depression_01,levels = c(1,0,-1)),
                 linetype=factor(depression_01,levels = c(1,0,-1))),
             size=1) + 

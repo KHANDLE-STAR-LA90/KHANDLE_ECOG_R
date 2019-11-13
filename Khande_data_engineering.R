@@ -61,8 +61,69 @@ for (col in 2:nc) {
 }
 
 raw_data_sas <- raw_data_clean
+
+##RENAMING some variables
+
+## @knitr converting_some_variables
+
+#The names of some variables are just composed of 2 letters and are difficult 
+#to remember. the following lines rename them to more understandable names:
+#(Accesorily I also use the loop to make sure the data type is "numeric")
+#The corresponding long names are IN THE SAME ORDER)
+#I've left some identical when they aren't usefull
+
+short_names <-c("vm","vm_se","vmform","pa","pa_se","on","on_se","phon","phon_se",
+                "wm","wm_se","cat","cat_se","vrmem","sem","exec")
+
+#the new dataset has "SENAS_"in front of the variale names now
+short_names<-paste0("SENAS_",short_names)
+
+long_names <- c("verbal_episodic_mem","verbal_episodic_mem_se","vmform",
+                "picture_assoc","picture_assoc_se","object_naming",
+                "object_naming_se","fluency_phon","fluency_phon_se",
+                "working_mem","working_mem_se","fluency_cat","fluency_cat_se",
+                "adj_verbal_episodic_mem","semantic_memory","executive_function")
+for (vn in 1:length(short_names)) {
+  columnIndex <- which(colnames(raw_data_clean)==short_names[vn])
+  colnames(raw_data_clean)[columnIndex]<-long_names[vn]
+  raw_data_clean[,columnIndex]<-as.numeric(raw_data_clean[,columnIndex])
+}
+
+
+## @knitr renaming_variables(more renaming)
+
+
+#changing the name of the race groups
+raw_data_clean[which(raw_data_clean[,"race"]=="White"),"race"] <- "Non-Latino-White"
+raw_data_clean[which(raw_data_clean[,"race"]=="LatinX"),"race"] <- "Latino"
+raw_data_clean[which(raw_data_clean[,"race"]=="AfrAmer"),"race"] <- "Black"
+raw_data_clean[which(raw_data_clean[,"race"]=="Native American"),"race"] <- NA #there's just one guy..
+raw_data_clean[which(raw_data_clean[,"race"]=="Refused/Missing"),"race"] <- NA
+
+#Concernerd thinking
+raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==1),"CONCERNED_THINKING"] <- "Yes"
+raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==2),"CONCERNED_THINKING"] <- "No"
+
+#Language
+raw_data_clean$language<-ifelse(raw_data_clean$LANG==2058,"SPANISH","ENGLISH")
+raw_data_clean$language<-as.factor(raw_data_clean$language)
+## ----
+#Creating a short verion of the Ecog (based of 12 items)
+Ecog_12items <- c("ECOG_MEM1","ECOG_MEM2","ECOG_LANG1","ECOG_LANG2",
+                  "ECOG_VISUAL_SPATIAL2","ECOG_VISUAL_SPATIAL5",
+                  "ECOG_PLANNING1","ECOG_PLANNING3",
+                  "ECOG_ORGANIZATION1","ECOG_ORGANIZATION2",
+                  "ECOG_DIVIDED_ATTENTION1","ECOG_DIVIDED_ATTENTION2" )
+
+
+for (i in Ecog_12items){
+  raw_data_clean[,i] <-as.numeric(raw_data_clean[,i])
+}
+
+# saving all to a fresh dataset
+raw_data_averages <- raw_data_clean
 ######################################################################
-#   @CRYSTAL: switch to line 135+ this part doesn't need review
+#   @CRYSTAL: switch to line 200+ this part doesn't need review
 
 ## PLOTTING ALL THE VARIABLES FROM THE DATASET IN AN EXTERNAL PDF file 
 # this is just to have a first look at the data
@@ -130,78 +191,13 @@ if(make.plot.pdf==1){
 f_FIRST_GLANCE(path2pdf=path2pdf, Dataset = raw_data_sas) 
 dev.off()
 }
-########################################################################
-
-
-##RENAMING some variables
-
-## @knitr converting_some_variables
-
-#The names of some variables are just composed of 2 letters and are difficult 
-#to remember. the following lines rename them to more understandable names:
-#(Accesorily I also use the loop to make sure the data type is "numeric")
-#The corresponding long names are IN THE SAME ORDER)
-#I've left some identical when they aren't usefull
-
-short_names <-c("vm","vm_se","vmform","pa","pa_se","on","on_se","phon","phon_se",
-                "wm","wm_se","cat","cat_se","vrmem","sem","exec")
-
-#the new dataset has "SENAS_"in front of the variale names now
-short_names<-paste0("SENAS_",short_names)
-
-long_names <- c("verbal_episodic_mem","verbal_episodic_mem_se","vmform",
-                "picture_assoc","picture_assoc_se","object_naming",
-                "object_naming_se","fluency_phon","fluency_phon_se",
-                "working_mem","working_mem_se","fluency_cat","fluency_cat_se",
-                "adj_verbal_episodic_mem","semantic_memory","executive_function")
-for (vn in 1:length(short_names)) {
-  columnIndex <- which(colnames(raw_data_clean)==short_names[vn])
-  colnames(raw_data_clean)[columnIndex]<-long_names[vn]
-  raw_data_clean[,columnIndex]<-as.numeric(raw_data_clean[,columnIndex])
-}
-
-
-## @knitr renaming_variables
 
 
 
-#changing the name of the race groups
-raw_data_clean[which(raw_data_clean[,"race"]=="White"),"race"] <- "Non-Latino-White"
-raw_data_clean[which(raw_data_clean[,"race"]=="LatinX"),"race"] <- "Latino"
-raw_data_clean[which(raw_data_clean[,"race"]=="AfrAmer"),"race"] <- "Black"
-raw_data_clean[which(raw_data_clean[,"race"]=="Native American"),"race"] <- NA
-raw_data_clean[which(raw_data_clean[,"race"]=="Refused/Missing"),"race"] <- NA
-
-#Concernerd thinking
-raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==1),"CONCERNED_THINKING"] <- "Yes"
-raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==2),"CONCERNED_THINKING"] <- "No"
-
-#Language
-raw_data_clean$language<-ifelse(raw_data_clean$LANG==2058,"SPANISH","ENGLISH")
-#raw_data_clean[which(raw_data_clean[,"language"]==1033 ),"language"] <- "English"
-#raw_data_clean[which(raw_data_clean[,"language"]==2058 ),"language"] <- "Spanish"
-raw_data_clean$language<-as.factor(raw_data_clean$language)
-## ----
-#Creating a short verion of the Ecog (based of 12 items)
-Ecog_12items <- c("ECOG_MEM1","ECOG_MEM2","ECOG_LANG1","ECOG_LANG2",
-                  "ECOG_VISUAL_SPATIAL2","ECOG_VISUAL_SPATIAL5",
-                  "ECOG_PLANNING1","ECOG_PLANNING3",
-                  "ECOG_ORGANIZATION1","ECOG_ORGANIZATION2",
-                  "ECOG_DIVIDED_ATTENTION1","ECOG_DIVIDED_ATTENTION2" )
-
-# Ecog_12items <- c("MEM1","MEM2","LANG1","LANG2","VISUAL_SPATIAL2",
-#                   "VISUAL_SPATIAL5","PLANNING1","PLANNING3","ORGANIZATION1",
-#                   "ORGANIZATION2","DIVIDED_ATTENTION1","DIVIDED_ATTENTION2")
-for (i in Ecog_12items){
-  raw_data_clean[,i] <-as.numeric(raw_data_clean[,i])
-}
-
-# saving all to a fresh dataset
-raw_data_averages <- raw_data_clean
 
 ######################################################################3
 #converting EDUCATON to "years of EDUCATION"
-######################################################################3
+######################################################################
 
 #EDUCATION_TEXT contains years of educ. for those who have <13 years of education 
 #and some crap coding for "missing"(99) and "refused"(88) which we recode to "NA")
@@ -265,7 +261,8 @@ raw_data_averages[
 
 raw_data_averages$yrEDUCATION <- as.numeric(raw_data_averages$yrEDUCATION)
 table(raw_data_averages$EDUCATION,raw_data_averages$yrEDUCATION,useNA = "ifany")
-################################################################################
+
+################################################################################3
 ## Coding family history
 ################################################################################
 
