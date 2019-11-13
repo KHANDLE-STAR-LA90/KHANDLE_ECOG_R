@@ -7,7 +7,7 @@ require(ggplot2)
 require(reshape2)
 
 ##loading the new data
-w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfer4_2019Oct18/khandle_baseline_20191018.sas7bdat")
+w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfert5_2019Nov13/khandle_baseline_20191112.sas7bdat")
 
 raw_data_sas <- as.data.frame(w1)
 
@@ -339,13 +339,29 @@ raw_data_averages$Ecog12_including_partial_averages <- DF$Ecog12_including_parti
 raw_data_averages$Ecog12_missing <- DF$Ecog12_missing
 
 ##############################################################
-# #creating a special binary variable of poeple that have SCD (experimental)
-# binary_SCD <- ifelse(DF[,Ecog_12items]>2,1,0)
-# binary_SCD$sumSCD<- rowSums(binary_SCD,na.rm = T)
-# binary_SCD$binSCD <- ifelse(binary_SCD$sumSCD>0,1,0)
-# table(binary_SCD$binSCD)
-# DF$binSCD <- binary_SCD$binSCD
-# DF$sumSCD <- binary_SCD$sumSCD
+# #creating a special table of people that report variour levels of impairment (experimental)
+Ecog_counts <- data.frame(lvl=factor(rep(1:4,each=12)),Nitems=factor(rep(1:12,times=4)) ,count=rep(0,48))
+for(lvl in 1:4){
+    binary_SCD <- ifelse(DF[,Ecog_12items]>= lvl,1,0)
+  for(n in 1:12){
+    sumSCD<- rowSums(binary_SCD,na.rm = T)
+    binSCD <- ifelse(sumSCD >= n,1,0)
+    Ecog_counts[lvl*12-12+n,3]<- (sum(binSCD,na.rm = T)/1617)*100
+  }
+}
+
+require(ggplot2)
+EcogSeverity <-ggplot(Ecog_counts)+
+  geom_line(aes(x=Ecog_counts$Nitems,y=Ecog_counts$count,
+                                  group=Ecog_counts$lvl,colour=Ecog_counts$lvl),
+            size=1.2)+
+  xlab("number of intems")+
+  ylab("percentage of the population")+
+  scale_color_discrete(name= "Perceived change in 10 years", 
+                       labels=c("no change","sometimes","systematically a little worse","systematically much worse"))+
+  theme(legend.justification=c(1,0), 
+        legend.position=c(0.99,0.40),
+        text = element_text(size=14))
 # ###############################################################
 ################################################################################
 
@@ -373,7 +389,8 @@ DF<-DF[-which(is.na(DF$depression_01)),]
 #same for raw_data_avg
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$logEcog12)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$adj_verbal_episodic_mem)),]
- raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$yrEDUCATION)),]
+ raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$race)),]
+  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$yrEDUCATION)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$depression_01)),]
 
 

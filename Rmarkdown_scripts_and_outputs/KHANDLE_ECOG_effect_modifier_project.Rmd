@@ -533,3 +533,13 @@ d
 e
 f
 ```
+
+# Should we binarize ?
+
+If so where to choose the cut-off ?
+If we count the % of the population that reports at least 1 item rated as systematically much worse, we get 12.5% which is about what is reported by the CDC paper from Taylor et al.
+The plot bellow shows the percentage of the participants that rated severity of change between 1=no change to 4 systematically worse. The x axis is the number of item rated to a given level of severity. for example: 25% of participants rated at least 2 items to be "systematically a little worse", or 6 items to be "sometimes worse". ect.
+```{r}
+EcogSeverity
+```
+
