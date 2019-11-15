@@ -24,7 +24,7 @@ education, then depressive symptoms
 just the usefull variables) and raw_data_averages that contains all the variables.
        g. save only the latter data table
 
-2.	The script "make_table1.R" basically makes the table 1-- CAN'T RUN
+2.	The script "make_table1.R" basically makes the table 1-- DONE... one small comment
 It basically plays with the functions in the package "Gmisc" (some of which I had to change a 
 little and copied them to the script).
 Real script starts at line 165.
