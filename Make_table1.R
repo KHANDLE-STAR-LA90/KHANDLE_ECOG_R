@@ -170,10 +170,7 @@ DF$Age90 <- rep("FALSE",nrow(DF))#by pre-allocating this collumn with "FALSE"
 #(which otherwise get accounted as missing in the "gtTable1stats" function 
 # so that you'd get 2 levels nTRUE=x,nFALSE=y,and missing=z ) when I actually just want n"TRUE"(% of the 1712 total)
 DF$Age90 <- factor(DF$age>=89.9,levels = c("TRUE","FALSE"))
-
-#CS:  I'm getting that those labelled Man and Woman have switched with this levelling (compare to raw_data_averages)
 DF$GENDER <- factor(DF$GENDER, levels = c("Woman","Man"))
-
 #DF$GENDER <- factor(DF$GENDER, labels = c("Female","Male"))
 DF$RELATIVE_DEMENTIA<- factor(DF$RELATIVE_DEMENTIA,levels = c(1,0))
 DF$all<-rep("Total",nrow(DF))
