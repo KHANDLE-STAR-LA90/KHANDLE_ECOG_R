@@ -3,7 +3,7 @@ The files included in this code review are:
 The markdown script that sequentially calls all the other scripts:
 0.	KHANDLE_ECOG_effect_modifier_project.rmd
 The other scripts (called by markdown) are:
-1.	Khandle_data_engineering.R
+1.	Khandle_data_engineering.R-- DONE.  1 tiny comment... search for "CS:"
 Imports the SAS datadase with heaven, cleans the data by removing NAs, renaming variables of 
 interest and renaming levels within factors (e.g. "yes/no" instead of "1/2") for the latter I refer 
 to the data dictionary provided by Kaiser's data analyst (Dil). 
@@ -24,12 +24,13 @@ education, then depressive symptoms
 just the usefull variables) and raw_data_averages that contains all the variables.
        g. save only the latter data table
 
-2.	The script "make_table1.R" basically makes the table 1
+2.	The script "make_table1.R" basically makes the table 1-- CAN'T RUN
 It basically plays with the functions in the package "Gmisc" (some of which I had to change a 
 little and copied them to the script).
 Real script starts at line 165.
 It makes a list of variables to show in the table 1 and makes the render as html table.
-3.	The script "plotting_loess.R " generates plots with local averages  geomsmooth(..., 
+3.	The script "plotting_loess.R "-- DONE; I can't get the facetted plot to run
+generates plots with local averages  geomsmooth(..., 
 type="loess") and repeats this by using restricted cubic splines for the 3 variables from the 
 SENAS scale (episodic memory, semantic memory, executive function)
 4.	The script "statistical_analysis.R" 
