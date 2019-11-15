@@ -60,7 +60,7 @@ for (col in 2:nc) {
     }
 }
 
-raw_data_sas <- raw_data_clean
+
 
 ##RENAMING some variables
 
@@ -122,76 +122,6 @@ for (i in Ecog_12items){
 
 # saving all to a fresh dataset
 raw_data_averages <- raw_data_clean
-######################################################################
-#   @CRYSTAL: switch to line 200+ this part doesn't need review
-
-## PLOTTING ALL THE VARIABLES FROM THE DATASET IN AN EXTERNAL PDF file 
-# this is just to have a first look at the data
-#(if make.plot.pdf = 0 it skips this step)
-#(if make.plot.pdf = 1 the function f_FIRST_GLANCE is called; set the path the
-#saved results)
-make.plot.pdf <- 0
-
-#creating the function:
-f_FIRST_GLANCE <- function(path2pdf, Dataset){
-
-
-pdf(file = path2pdf)
-
-for (col in 2:nc){
-  #if there's not ONLY NAs, continue
-  if(sum(is.na(Dataset[,col])) !=nrow(Dataset) & typeof(Dataset[,col]) %in% c("integer","logical","double")){
-    par(mfrow=c(1,3))
-      if (length(unique(Dataset[,col]))>2){
-        par(mfrow=c(1,3))
-        print(paste0(colnames(Dataset)[col]," detected as continuous double"))
-        boxplot(Dataset[,col])
-        title(main = paste0(colnames(Dataset)[col]," with na's"))
-        boxplot(Dataset[,col])
-        title(main = colnames(Dataset)[col])
-        hist(Dataset[,col], main=colnames(Dataset)[col])
-      }
-      if(length(unique(Dataset[,col]))<=2){
-        print(paste0(colnames(Dataset)[col]," detected as binary"))
-        title_string <- as.character(colnames(Dataset)[col])
-        text_string <- paste0("count= ",sum(raw_data[,col],na.rm=T))
-        print(ggplot(data = Dataset) + theme(axis.title.x = element_blank())+
-                  geom_bar(aes(get(colnames(Dataset)[col]))) +  
-                  ggtitle(paste0 (title_string, " ",text_string))+
-                ylim(0,high=1592) + theme_bw()+theme(axis.title.x = element_blank(),axis.text.x=element_text(angle=90, size = 11))+
-          geom_text(stat="count", aes(x= get(colnames(Dataset)[col]),label=..count..), vjust=-1))
-      }
-  }
-  if(sum(is.na(Dataset[,col])) !=nrow(Dataset) & typeof(Dataset[,col]) %in% c("character","factor")){
-    par(mfrow=c(1,1))
-    titl.txt <- as.character(colnames(Dataset)[col])
-    print(paste0(colnames(Dataset)[col]," is a factor"))
-    if (length(unique(Dataset[,col]))>10) {
-      print(ggplot(data = Dataset) + 
-              geom_bar(aes(x= get(colnames(Dataset)[col])))+
-              theme(axis.title.x = element_blank(),axis.text.x=element_text(angle=90,size=7)) + 
-              ggtitle(titl.txt)+
-              geom_text(stat="count", aes(x= get(colnames(Dataset)[col]),label=..count..), vjust=-1))
-    }
-    else{ print(ggplot(data = Dataset) + 
-            geom_bar(aes(x= get(colnames(Dataset)[col])))+
-            theme(axis.title.x = element_blank(),axis.text.x=element_text(angle=90,size=11)) + 
-            ggtitle(titl.txt)+
-            geom_text(stat="count", aes(x= get(colnames(Dataset)[col]),label=..count..), vjust=-1))
-    }
-  }
-}
-}
-
-# PLEASE SET THE PATH TO THE RESULTS HERE (this file will be created later)
-path2pdf <-"All_variables_figures_first_glance.pdf"
-#
-# Running the function:
-if(make.plot.pdf==1){
-f_FIRST_GLANCE(path2pdf=path2pdf, Dataset = raw_data_sas) 
-dev.off()
-}
-
 
 
 
@@ -214,7 +144,7 @@ raw_data_averages$TRUECERT <- factor(
   ifelse(raw_data_averages[,"TRNCERT"]==2 &
            raw_data_averages[,"LONGCERT"]==4,
          1,0))
-raw_data_averages$TRUECERT[which(raw_data_averages$TRUECERT==99)] <- NA
+
 
 # number of years of education = EDUCATION_TEXT 
 #when they did not attend college (EDUCATION=0)
@@ -342,7 +272,7 @@ raw_data_averages$Ecog12_missing <- DF$Ecog12_missing
 # #creating a special table of people that report variour levels of impairment (experimental)
 Ecog_counts <- data.frame(lvl=factor(rep(1:4,each=12)),Nitems=factor(rep(1:12,times=4)) ,count=rep(0,48))
 for(lvl in 1:4){
-    binary_SCD <- ifelse(DF[,Ecog_12items]>= lvl,1,0)
+    binary_SCD <- ifelse(DF[,Ecog_12items]== lvl,1,0)
   for(n in 1:12){
     sumSCD<- rowSums(binary_SCD,na.rm = T)
     binSCD <- ifelse(sumSCD >= n,1,0)
@@ -355,12 +285,12 @@ EcogSeverity <-ggplot(Ecog_counts)+
   geom_line(aes(x=Ecog_counts$Nitems,y=Ecog_counts$count,
                                   group=Ecog_counts$lvl,colour=Ecog_counts$lvl),
             size=1.2)+
-  xlab("number of intems")+
-  ylab("percentage of the population")+
+  xlab("Number of items")+
+  ylab("Percentage of the population")+
   scale_color_discrete(name= "Perceived change in 10 years", 
                        labels=c("no change","sometimes","systematically a little worse","systematically much worse"))+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.99,0.40),
+        legend.position=c(0.99,0.69),
         text = element_text(size=14))
 # ###############################################################
 ################################################################################
