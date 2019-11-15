@@ -162,7 +162,9 @@ describeBoth <- function (x, iqr = F, html = TRUE, digits = 1, digits.nonzero = 
 ####################################################################################################3
 ###########   END  OF FUNCTIONS  ##############################
 #----
+#CS:  DF is already a data frame so this line is unecessary
 DF<-as.data.frame(DF)
+
 #DF<-as.data.frame(raw_data_averages)
 
 DF$Age90 <- rep("FALSE",nrow(DF))#by pre-allocating this collumn with "FALSE" 
