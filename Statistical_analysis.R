@@ -16,11 +16,21 @@ colnames(DF) <- short_names
 
 #Little tweek to assure that the statistical analysis 
 #will use the right reference values when comparing factors
+
+#CS:  I'm not getting these as factors that can be releveled based on how raw_data_averages was created
+# so I had to turn them into factors to use the following code
+#---- start Crystal code ----
+DF$race <- as.factor(DF$race)
+DF$GENDER <- as.factor(DF$GENDER)
+#---- end Crystal code ----
+
 DF$race <- relevel(DF$race, ref = "Non-Latino-White")
 DF$GENDER <- relevel(DF$GENDER, ref = "Woman")
 
 ## creating a short dataset for "memory" (Statics dataframe mem)
 DFmem <- DF[,c("logEcog12","memory","AGE_75_d","race","GENDER","yrEDU","F_Hist","depression_01")]
+
+#CS: DFmem is automatically a data frame since it is derived from DF so this code is unecessary
 DFmem <- data.frame(DFmem)
 
 
@@ -144,6 +154,10 @@ for(t in 1:6){
 }
 
 
+#CS: Can you check the output table here and see if you get the columns mislabelled as I'm seeing?
+# I'm not able to run this code because I can't install "sjPlot" =/ so I didn't know if you had 
+# fixed this already and I just couldn't run the new version (though I think the
+# code below isn't fixed yet based on the ordering of dv.labels)
 
 for (i in 1:length(modlistex)) {
   model<- lm(data = DFex, formula = modlistex_nospline[[i]])
