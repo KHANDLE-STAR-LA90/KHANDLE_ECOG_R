@@ -33,7 +33,6 @@ DFmem <- DF[,c("logEcog12","memory","AGE_75_d","race","GENDER","yrEDU","F_Hist",
 #CS: DFmem is automatically a data frame since it is derived from DF so this code is unecessary
 DFmem <- data.frame(DFmem)
 
-
 # creating a list of models (mem)
 # estimating the models  
 #and adding them to a list called memfit
