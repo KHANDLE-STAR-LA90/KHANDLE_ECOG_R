@@ -33,7 +33,7 @@ It makes a list of variables to show in the table 1 and makes the render as html
 generates plots with local averages  geomsmooth(..., 
 type="loess") and repeats this by using restricted cubic splines for the 3 variables from the 
 SENAS scale (episodic memory, semantic memory, executive function)
-4.	The script "statistical_analysis.R" 
+4.	The script "statistical_analysis.R" -- DONE... comment about output 3 (experimental plot).  I forgot that you told me to ignore the code, sorry!
 Loads the complete dataset "raw_data_averages.csv" which contains the derived variables 
 created by the first script.
 It them creates a string with the formula for a base model, and for additional models 
