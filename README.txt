@@ -48,7 +48,7 @@ The lists of fitted models are also used to create formatted .html tables with t
 parameters.
 @crystal: you may ignore what is after line 110, as we just experimented with another 
 scenario where we eliminated the knot for executive function.
-5.	The script "plotting_predicted_values.R"
+5.	The script "plotting_predicted_values.R"-- DONE
 Part 1:
 Creates hypothetical datasets for each of the 6 effect modifiers age, race, gender, 
 education, family history of dementia, depression 
