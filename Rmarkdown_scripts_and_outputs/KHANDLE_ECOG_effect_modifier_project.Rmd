@@ -206,6 +206,24 @@ read_chunk('../Plotting_loess.R')
 
 ```
 
+##Verification
+```{r}
+ baselinemodels <-list()
+baselinemodels[[1]]<-lm(raw_data_averages$logEcog12~raw_data_averages$adj_verbal_episodic_mem)
+baselinemodels[[2]]<-lm(raw_data_averages$logEcog12~raw_data_averages$executive_function)
+baselinemodels[[3]]<-lm(raw_data_averages$logEcog12~lspline(raw_data_averages$executive_function,knots = 1))
+base_model_comparison <-tab_model(baselinemodels, title = "Relation between ECog and objective cognitive performance", 
+          auto.label = T,
+          dv.labels = c("unadjusted memory","unadjusted executive function","executive function with linear splines"),
+          digits = 3,
+          ci.hyphen = ", ",
+          file = "./BASE_MODELS.html")
+
+base_model_comparison
+
+
+```
+
 
 ## Rectricted cubic splines
 
@@ -541,5 +559,8 @@ If we count the % of the population that reports at least 1 item rated as system
 The plot bellow shows the percentage of the participants that rated severity of change between 1=no change to 4 systematically worse. The x axis is the number of item rated to a given level of severity. for example: 25% of participants rated at least 2 items to be "systematically a little worse", or 6 items to be "sometimes worse". ect.
 ```{r}
 EcogSeverity
+tiff("./ECog_scores.tiff",res = 400,width = 2400,height = 1600)
+ggarrange(EcogSeverity,ncol = 1)
+dev.off()
 ```
 

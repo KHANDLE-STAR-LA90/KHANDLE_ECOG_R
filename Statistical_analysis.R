@@ -31,7 +31,7 @@ mem <- list()
 memfit <- list()
 
 BASEmem <- "logEcog12 ~ memory*AGE_75_d " #it is not necessary to specify memory or age alone (main effects) because they need to be estimated anyways to get estimates for the inteaction term
-interactions <- c(BASEmem, "memory*race", "memory*GENDER","memory*yrEDU + memory*race","memory*F_Hist","memory*depression_01","memory*yrEDU")
+interactions <- c(BASEmem,  "memory*GENDER","memory*race","memory*yrEDU + race","memory*F_Hist","memory*depression_01 + GENDER","memory*yrEDU")
 
 memfit[[1]] <- lm(data = DFmem,formula = BASEmem)
 
@@ -42,20 +42,22 @@ mem[[2]] <-paste(BASEmem, " + ", interactions[3])
 mem[[3]] <-paste(BASEmem, " + ", interactions[4])
 mem[[4]] <-paste(BASEmem, " + ", interactions[5])
 mem[[5]] <-paste(BASEmem, " + ", interactions[6])
-mem[[6]] <-paste(BASEmem, " + ", interactions[7])
+#mem[[6]] <-paste(BASEmem, " + ", interactions[7])
 
 #adding to memfit
-for(n in 1:6){
+for(n in 1:5){
 memfit[[n+1]]<- lm(data = DFmem, formula = mem[[n]])
 }
 
 #creating a result table
 TwoVarMem <-tab_model(memfit, title = "Relation between ECog and memory", 
           auto.label = T,
-          dv.labels = c("Modifier: age","Modifier race/ethnicity","Modifier: Gender","Modifier Education (+ race))","modifier: Family History","Modifier: depression","Modifier: Education"),
+          dv.labels = c("Modifier: age","Modifier: Gender","Modifier race/ethnicity","Modifier Education","Modifier: Family History","Modifier: depression"),
           digits = 3,
           ci.hyphen = ", ",
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_memory.html")
+          string.ci = "95% CI",
+          show.p = F,
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Formatted_model_results_memory.html")
 
 TwoVarMem
 
@@ -80,7 +82,7 @@ DFex <-  DF[,c("logEcog12","ex_function","AGE_75_d","race","GENDER","yrEDU","F_H
 
 DF1<-na.omit(DFex,cols=c("ex_function","logEcog12","AGE_75_d"))
 BASEex <- "logEcog12 ~ I(lspline(ex_function, knots =1))*AGE_75_d " #it is not necessary to specify memory or age alone because they need to be estimated anyways to get estimates for the inteaction term
-interactionsex <- c(BASEex, "I(lspline(ex_function, knots =1))*race", "I(lspline(ex_function, knots =1))*GENDER","I(lspline(ex_function, knots =1))*yrEDU + I(lspline(ex_function, knots =1))*race","I(lspline(ex_function, knots =1))*F_Hist","I(lspline(ex_function, knots =1))*depression_01","I(lspline(ex_function, knots =1))*yrEDU")
+interactionsex <- c(BASEex, "I(lspline(ex_function, knots =1))*GENDER", "I(lspline(ex_function, knots =1))*race","I(lspline(ex_function, knots =1))*yrEDU + race","I(lspline(ex_function, knots =1))*F_Hist","I(lspline(ex_function, knots =1))*depression_01 + GENDER","I(lspline(ex_function, knots =1))*yrEDU")
 
 results_execfun<-list()
 
@@ -88,7 +90,7 @@ results_execfun[[1]] <- lm(BASEex,data = DF1)
 
 #make a list of model formulas
 modlistex<-list()
-for(t in 1:6){
+for(t in 1:5){
   print(t)
   modlistex[[t]] <- paste0(BASEex, " + ", interactionsex[t+1])  
 }
@@ -103,10 +105,12 @@ for (i in 1:length(modlistex)) {
 #creating a result table
 TwoVarEx<-tab_model(results_execfun, title = "Relation between ECog and executive function",
           auto.label = T,
-          dv.labels = c("Modifier: AGE","Modifier: Race/Ethnicity","Modifier: GENDER","Modifier: Education", "Modifier: Family history","Modifier: depression","Modifier: education"),
+          dv.labels = c("Modifier: AGE","Modifier: GENDER","Modifier: Race/Ethnicity","Modifier: Education", "Modifier: Family history","Modifier: depression"),
           digits = 3,
           ci.hyphen = ", ",
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive.html")
+          show.p = F,
+          string.ci = "95% CI",
+          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Formatted_model_results_executive.html")
 TwoVarEx
 
 
