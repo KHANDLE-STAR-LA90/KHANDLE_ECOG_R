@@ -16,6 +16,8 @@ require(rms)
 ##plot Ecog scores by SENAS sub-scores
 meltDF <- melt(data = DF1,
                measure.vars=colnames(raw_data_averages[,c("adj_verbal_episodic_mem","semantic_memory","executive_function")])) 
+
+#CS: this plot doesn't run for me if I try to do the facetting
 ggplot(data = meltDF,aes(x=meltDF$value,y=meltDF$logEcog12))+
   geom_point(alpha =0.9)+
   geom_smooth(method = "loess", span= 0.6)+
@@ -123,3 +125,4 @@ plot(x,spmodel$fitted.values,
         yaxt="none",
         ylab = "")
 points(x,y)
+

@@ -162,7 +162,9 @@ describeBoth <- function (x, iqr = F, html = TRUE, digits = 1, digits.nonzero = 
 ####################################################################################################3
 ###########   END  OF FUNCTIONS  ##############################
 #----
+#CS:  DF is already a data frame so this line is unecessary
 DF<-as.data.frame(DF)
+
 #DF<-as.data.frame(raw_data_averages)
 
 DF$Age90 <- rep("FALSE",nrow(DF))#by pre-allocating this collumn with "FALSE" 
@@ -180,10 +182,13 @@ DF$all<-rep("Total",nrow(DF))
 # this way we can display both description methods (Mean [sd] and Median [min-max])
 
 ## @knitr Table1
+
+#CS:  redundant code?  See above
 DF$all<-rep("Total",nrow(DF))
 
 t1 <- list()
 
+#CS:  I can't run this code from this point on because it can't find the "getDescriptionStatsBy function =/
 t1[["Age"]] <-
   getTable1Stats(DF$age,digits = 1)
 
