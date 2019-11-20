@@ -5,6 +5,7 @@
 
 # raw_data_averages <- read.csv("/Users/fcorlier/Box Sync/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")[,2:538]
  ListOfVars <- c("semantic_memory","adj_verbal_episodic_mem","executive_function","age","GENDER","race","EDUCATION","yrEDUCATION",Ecog_12items, "RELATIVE_DEMENTIA","SIBLING_DEMENTIA","PARENTAL_DEMENTIA", "Ecog12_including_partial_averages","logEcog12","depression_01")
+ 
  DF1<-raw_data_averages[,ListOfVars]
 
 

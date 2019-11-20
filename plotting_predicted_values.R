@@ -68,14 +68,15 @@ newDFdepr <- data.frame(
   memory=xdpr,
   ex_function=xdpr,
   AGE_75_d=rep(c(0),each=21),
-  depression_01=rep(c(-1,0,1),each=7))
+  depression_01=rep(c(-1,0,1),each=7),
+  GENDER=rep(c("Woman"),each=21))
 
 predggba_mem <- predict.lm(memfit[[1]],
                     newDFage, interval = "conf")
-predggra_mem <- predict.lm(memfit[[2]],
-                    newDFrace, interval = "conf")
-predggge_mem <- predict.lm(memfit[[3]],
+predggge_mem <- predict.lm(memfit[[2]],
                     newDFgender, interval = "conf")
+predggra_mem <- predict.lm(memfit[[3]],
+                    newDFrace, interval = "conf")
 predgged_mem <- predict.lm(memfit[[4]],
                     newDFedu, interval = "conf")
 predggfh_mem <- predict.lm(memfit[[5]],
@@ -86,10 +87,10 @@ predggdpr_mem <- predict.lm(memfit[[6]],
 
 predggba <- predict.lm(results_execfun[[1]],
                        newDFage, interval = "conf")
-predggra <- predict.lm(results_execfun[[2]],
-                       newDFrace, interval = "conf")
-predggge <- predict.lm(results_execfun[[3]],
+predggge <- predict.lm(results_execfun[[2]],
                        newDFgender, interval = "conf")
+predggra <- predict.lm(results_execfun[[3]],
+                       newDFrace, interval = "conf")
 predgged <- predict.lm(results_execfun[[4]],
                        newDFedu, interval = "conf")
 predggfh <- predict.lm(results_execfun[[5]],
@@ -329,7 +330,7 @@ Ba <- ggplot(data = newDFage[range,])+
             size=1)+ 
   theme_minimal()+
   ylab("Predicted log(ECog)")+
-  xlab(element_blank())+
+  xlab("Executive function")+
   theme(legend.justification=c(1,0), 
         legend.position=c(0.95,0.65),
         legend.direction = "vertical",
@@ -358,7 +359,7 @@ Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
             size=1)+ 
   theme_minimal()+
   ylab("Predicted log(ECog)")+
-  xlab(element_blank())+
+  xlab("Executive function")+
   theme(legend.justification=c(1,0), 
         legend.position=c(.95,0.62),
         legend.title = element_blank(),
@@ -393,7 +394,7 @@ Ge<-ggplot(data = newDFgender)+
     size=1)+ 
   theme_minimal()+
   ylab("Predicted log(ECog)")+
-  xlab(element_blank())+
+  xlab("Executive function")+
   theme(legend.justification=c(1,0), 
         legend.position=c(0.95,0.70),
         legend.spacing = unit(.1,"cm"),
@@ -423,7 +424,7 @@ Ed <- ggplot(data = newDFedu[range,])+
             size=1) + 
   theme_minimal() +
   ylab("Predicted log(ECog)") + 
-  xlab(element_blank())+
+  xlab("Executive function")+
   theme(legend.justification=c(1,0), 
         legend.position=c(.95,0.70),
         legend.direction = "vertical",

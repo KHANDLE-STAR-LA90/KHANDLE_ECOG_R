@@ -1,22 +1,24 @@
 # here we start analysis the HKANDLE data:
 
-require(sjPlot)
-require(sjlabelled)
-require(sjmisc)
-require(kableExtra)
-require(lspline)
+ # require(sjPlot)
+ # require(sjlabelled)
+ # require(sjmisc)
+# require(kableExtra)
+  require(lspline)
 
-raw_data_averages <- read.csv("/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")[,2:694]#saving as csv always adds a column of indices in [,1] so I load from 2 to ncol+1
+#raw_data_averages <- read.csv("/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")[,2:694]#saving as csv always adds a column of indices in [,1] so I load from 2 to ncol+1
 ListOfVars <- c("semantic_memory","adj_verbal_episodic_mem","executive_function","Age_centered_75","Age_centered_75_decades","GENDER","race","CONCERNED_THINKING","yrEDUCATION_centered",Ecog_12items, "RELATIVE_DEMENTIA","SIBLING_DEMENTIA","PARENTAL_DEMENTIA","Ecog12_including_partial_averages","depression_01","logEcog12")
 short_names <- c("semantic_memory","memory","ex_function","AGE","AGE_75_d","GENDER","race","CONCERNED_THINKING","yrEDU",Ecog_12items, "F_Hist","SIBLING_DEMENTIA","PARENTAL_DEMENTIA","Ecog12","depression_01","logEcog12")
-DF<-as.data.frame(raw_data_averages[,ListOfVars])
+DF<-data.frame(raw_data_averages[,ListOfVars])
 
 
 colnames(DF) <- short_names
 
 #Little tweek to assure that the statistical analysis 
 #will use the right reference values when comparing factors
+DF$race <- factor(DF$race)
 DF$race <- relevel(DF$race, ref = "Non-Latino-White")
+DF$GENDER <- factor(DF$GENDER)
 DF$GENDER <- relevel(DF$GENDER, ref = "Woman")
 
 ## creating a short dataset for "memory" (Statics dataframe mem)
@@ -75,7 +77,7 @@ TwoVarMem <-tab_model(memfit, title = "Relation between log(ECog) and memory",
                          "Memory*Family hist. interaction",
                          "Depressive symptoms",
                          "Memory*Depr. symptoms interaction"),
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Formatted_model_results_memory.html")
+          file = here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","Formatted_model_results_memory.html"))
 
 TwoVarMem
 
@@ -155,7 +157,7 @@ TwoVarEx<-tab_model(results_execfun, title = "Relation between log(ECog) and exe
                          "Depressive symptoms",
                          "Executive fun.(<1)*Depr. symptoms interaction",
                          "Executive fun.(>1)*Depr. symptoms interaction"),
-          file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Formatted_model_results_executive.html")
+          file = here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","Formatted_model_results_executive.html"))
 TwoVarEx
 
 
@@ -183,7 +185,7 @@ basetabex_nospline<-tab_model(results_execfun_nospline[[1]], title = "Relation b
                      dv.labels = "Base model logEcog",
                      digits = 3,
                      ci.hyphen = ", ",
-                     file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/Base_model_executive_nospline.html")
+                     file = here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","Base_model_executive_nospline.html"))
 basetabex_nospline
 
 modlistex_nospline <- list()
@@ -203,7 +205,7 @@ TwoVarEx_NS<-tab_model(results_execfun_nospline, title = "Relation between ECog 
                     dv.labels = c("Base + Race/Ethnicity","Base + GENDER","Base + Education + race", "Base + Family history","Base + depression","Base + Education"),
                     digits = 3,
                     ci.hyphen = ", ",
-                    file = "./Rmarkdown_scripts_and_outputs/Formated_regression_tables/2variable_models_executive_nospline.html")
+                    file = here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","2variable_models_executive_nospline.html"))
 TwoVarEx_NS
 
 

@@ -15,12 +15,42 @@ header-includes:
 ---
 
 
+```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F }
+if (!require("pacman"))
+  install.packages("pacman", repos = 'http://cran.us.r-project.org')
+```
+
+```{r,echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F }
+# usage
+p_load("ggplot2",
+              "knitr",
+              "reshape2",
+              "kableExtra",
+              "haven",
+              "dplyr",
+              "lspline",
+              "sjmisc",
+              "sjlabelled",
+              "sjPlot",
+              "Hmisc",
+              "rms",
+              "ggformula",
+              "Gmisc",
+              "here")
+```
+
+
+
+
 ```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F}
-require(ggplot2)
-require(reshape2)
-require(knitr)
-require(kableExtra)
-source("../Khande_data_engineering.R")
+# require(ggplot2)
+# require(reshape2)
+# require(knitr)
+# require(kableExtra)
+# require(haven)
+# require(dplyr)
+
+source(here("Khande_data_engineering.R"))
 ```
 
 
@@ -31,7 +61,7 @@ knitr::opts_chunk$set(echo = F, cache = FALSE, warning=FALSE, message=FALSE)
  
 
 # List of authors: 
-Fabian W. Corlier (first), Daniel Mungas, Sarah Farias, Maria Glymour, Rachel Whitmer, (open to adding additional co-authors), Elizabeth Rose Mayeda (last)
+Fabian W. Corlier (first), Crystal Shaw, Eleanor Larson, Daniel Mungas, Sarah Farias, Maria Glymour, Rachel Whitmer, (open to adding additional co-authors), Elizabeth Rose Mayeda (last)
 
 # Background/rationale: 
 Subjective cognitive decline predicts incidence of mild cognitive impairment and dementia among older adults without cognitive impairment [(Mitchell *et al*., 2014)](https://gala.gre.ac.uk/id/eprint/12228/1/12228_STUBBS_SMC_to_dementia_draft_Acta_resubmission_July_23_GALA_(AAM)_(2014_In_Press).pdf), suggesting self-reported cognitive decline may be a sensitive measure of cognitive change. However, most of this research has been conducted among highly educated non-Latino white participants recruited from memory clinics, and little is known about social factors that modify the correspondence between objectively measured cognitive function and subjective cognitive decline. Prior work has shown that anxiety and depressive symptoms influence the correspondence between objectively measured cognitive function and subjective cognitive decline such that people with higher levels of anxiety or depressive symptoms are more likely to report subjective cognitive decline for the same level of objectively measured cognitive function [(Hanninen *et al*. 1991; ](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1532-5415.1994.tb06064.x) [Schmand *et al*. 1997; ](https://www.cambridge.org/core/product/identifier/S0007125000148287/type/journal_article) [Reid *et al*. 2006,](https://www.karger.com/Article/Pdf/96295) reviewed in [Jonker *et al*. 2000)](http://doi.wiley.com/10.1002/1099-1166%28200011%2915%3A11%3C983%3A%3AAID-GPS238%3E3.0.CO%3B2-5). However, to our knowledge, no prior work has evaluated whether social factors modify the link between objectively measured cognitive function and subjective cognitive decline. For example, people with a family history of dementia may be more aware or concerned about subtle changes in cognitive function, which may result in people with a family history of dementia to report more subjective cognitive decline for at a given level of objectively measured cognitive function. 
@@ -54,7 +84,7 @@ Does the correspondence between objectively measured of cognitive function (SENA
 ## DAG
 
 ```{r}
-knitr::include_graphics('/Users/fcorlier/Pictures/Screenshots/Screenshot (3).png') 
+knitr::include_graphics(here('Screenshot_dag.png')) 
 ```
 
 ## Description of the population
@@ -87,7 +117,7 @@ For the other education levels (with college attendance) coded in the variable *
   * If **EDUCATION = 5** then Years of education = 20 (PHD or equivalent)
 
 ```{r}
-EDUCyr_table <- read.csv("../Edu_recode.csv",header = F)
+EDUCyr_table <- read.csv(here("Edu_recode.csv"),header = F)
 colnames(EDUCyr_table)<-c("Type of diploma", "coded as (in years)")
 #kable(EDUCyr_table)
 ```
@@ -131,9 +161,9 @@ kable( FamilyH,row.names =F)%>%
 
 
 ```{r}
-source('../Make_table1.R')
+source(here('Make_table1.R'))
 knitr::opts_chunk$set(echo = F, cache = F, warning=FALSE, message=FALSE)
-read_chunk('../Make_table1.R')
+read_chunk(here('Make_table1.R'))
 ```
 
 ```{r Prepare_Data, echo=FALSE, include=FALSE}
@@ -198,7 +228,7 @@ The Model as stated in 5.3 assumes linear relationships between SENAS and Ecog. 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = F, cache = F, warning=FALSE, message=FALSE)
-read_chunk('../Plotting_loess.R')
+read_chunk(here('Plotting_loess.R'))
 ```
 
 
@@ -208,18 +238,21 @@ read_chunk('../Plotting_loess.R')
 
 ##Verification
 ```{r}
- baselinemodels <-list()
+baselinemodels <-list()
 baselinemodels[[1]]<-lm(raw_data_averages$logEcog12~raw_data_averages$adj_verbal_episodic_mem)
 baselinemodels[[2]]<-lm(raw_data_averages$logEcog12~raw_data_averages$executive_function)
-baselinemodels[[3]]<-lm(raw_data_averages$logEcog12~lspline(raw_data_averages$executive_function,knots = 1))
-base_model_comparison <-tab_model(baselinemodels, title = "Relation between ECog and objective cognitive performance", 
-          auto.label = T,
-          dv.labels = c("unadjusted memory","unadjusted executive function","executive function with linear splines"),
-          digits = 3,
-          ci.hyphen = ", ",
-          file = "./BASE_MODELS.html")
-
-base_model_comparison
+baselinemodels[[3]]<-lm(raw_data_averages$logEcog12~lspline::lspline(raw_data_averages$executive_function,knots = 1))
+    # require(texreg)
+    # htmlreg(baselinemodels, custom.note="%stars. htmlreg")
+ 
+# base_model_comparison <-tab_model(baselinemodels, title = "Relation between ECog and objective cognitive performance", 
+#           auto.label = T,
+#           dv.labels = c("unadjusted memory","unadjusted executive function","executive function with linear splines"),
+#           digits = 3,
+#           ci.hyphen = ", ",
+#           file = here("BASE_MODELS.html"))
+# 
+# base_model_comparison
 
 
 ```
@@ -248,7 +281,7 @@ So in the following analysis we will include two linear splines for this variabl
 ## Updated analytic approach
 
 ```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-source('../Statistical_analysis.R')
+source(here('Statistical_analysis.R'))
 ```
 We will sequentially analyse the consequtive models as follows:
 Our main model always includes Age, as this variable is known to alway be associated with both, our exposure variables and our outcome variable.
@@ -278,16 +311,6 @@ Executive function:
     
 # Results:
 ## Episodic memory
-### Base model
-#### regression results:
-
-Output:
-
-*********************************************************
-
-[a link to a formatted output here](./Formated_regression_tables/Base_model_memory.html)
-
-*********************************************************
 
 
 #### residuals and predicted values:
@@ -312,14 +335,17 @@ In the following order :
 
 *********************************************************
 
-[a link to a formatted output here](./Formated_regression_tables/2variable_models_memory.html)
+[a link to a formatted output here](`r here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","Formatted_model_results_memory.html")')
 
 *********************************************************
+```{r}
+TwoVarMem
+```
 
 
 #### Predicted values
 ```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-source('../plotting_predicted_values.R')
+source(here('plotting_predicted_values.R'))
 ```
 
 ```{r}
@@ -331,7 +357,7 @@ d <- FigureList[[4]]
 e <- FigureList[[5]]
 f <- FigureList[[6]]
 #saving one big composite figure
-string<-paste0("./Figure1_ggarange.tiff")
+string<-here("Figure1_ggarange.tiff")
 tiff(string,res = 300,width = 2550, height = 3300)
 ggarrange(
   ggarrange(a,b,
@@ -355,33 +381,21 @@ f
 
 
 
-### Full model
-
-In addition to the present full model, we could add multiple interaction between the different regessors (like age:education:gender) 
-
-*********************************************************
-
-[full model output here](./Formated_regression_tables/full_model_memory.html)
-
-*********************************************************
-
 
 ## Executive function
-### Base model
 
-*********************************************************
-
-[Here a formated output](./Formated_regression_tables/Base_model_executive.html)
-
-*********************************************************
 
 ### Two varable models
 
 *********************************************************
 
-[A link to a formatted output here:](./Formated_regression_tables/2variable_models_executive.html)
+[A link to a formatted output here:](r `here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","2variable_models_executive.html")`)
 
 *********************************************************
+```{r}
+TwoVarEx
+```
+
 
 ```{r}
 require(ggpubr)
@@ -392,7 +406,7 @@ d <- FigureList[[10]]
 e <- FigureList[[11]]
 f <- FigureList[[12]]
 #saving one big composite figure
-string<-paste0("./Figure2_ggarange.tiff")
+string<-paste0(here("Figure2_ggarange.tiff"))
 tiff(string,res = 300,width = 2550, height = 3300)
 ggarrange(
   ggarrange(a,b,
@@ -416,22 +430,22 @@ f
 
 
 ```{r}
-tiff("./Figure2a.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure2a.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(a,ncol = 1)
 dev.off()
-tiff("./Figure2b.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure2b.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(b,ncol = 1)
 dev.off()
-tiff("./Figure2c.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure2c.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(c,ncol = 1)
 dev.off()
-tiff("./Figure2d.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure2d.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(d,ncol = 1)
 dev.off()
-tiff("./Figure2e.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure2e.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(e,ncol = 1)
 dev.off()
-tiff("./Figure2f.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure2f.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(f,ncol = 1)
 dev.off()
 ```
@@ -440,14 +454,14 @@ dev.off()
 
 #### Predicted values plots
 ```{r,fig.show="hold", out.width="100%",cache=FALSE}
-knitr::include_graphics('./Figure2_ggarange.tiff')
+knitr::include_graphics(here('Figure2_ggarange.tiff'))
 ```
 
 
 
 *********************************************************
 
-[open full resolution image here:](./Figure2_ggarange.tiff)
+[open full resolution image here:](r`here("Figure2_ggarange.tiff")`)
 
 *********************************************************
 
@@ -469,7 +483,7 @@ And finally the full model with executive function (with all the above)
 
 *********************************************************
 
-[Formatted output of the full model here](./Formated_regression_tables/full_model_executive.html)
+[Formatted output of the full model here](r` here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","full_model_executive.html")`)
 
 *********************************************************
 
@@ -496,7 +510,7 @@ table(raw_data_averages$language,raw_data_averages$race, useNA = "ifany")
 
 ##removing the knot
 ```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-source('../plotting_NO_knot.R')
+source(here('plotting_NO_knot.R'))
 ```
 
 ```{r}
@@ -508,7 +522,7 @@ d <- FigureList[[16]]
 e <- FigureList[[17]]
 f <- FigureList[[18]]
 #saving one big composite figure
-string<-paste0("./Figure3_ggarange.tiff")
+string<-paste0(here("Figure3_ggarange.tiff"))
 tiff(string,res = 300,width = 2550, height = 3300)
 ggarrange(
   ggarrange(a,b,
@@ -522,22 +536,22 @@ dev.off()
 ```
 
 ```{r, include=F, message=F}
-tiff("./Figure3a.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure3a.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(a,ncol = 1)
 dev.off()
-tiff("./Figure3b.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure3b.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(b,ncol = 1)
 dev.off()
-tiff("./Figure3c.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure3c.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(c,ncol = 1)
 dev.off()
-tiff("./Figure3d.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure3d.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(d,ncol = 1)
 dev.off()
-tiff("./Figure3e.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure3e.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(e,ncol = 1)
 dev.off()
-tiff("./Figure3f.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("Figure3f.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(f,ncol = 1)
 dev.off()
 ```
@@ -559,7 +573,7 @@ If we count the % of the population that reports at least 1 item rated as system
 The plot bellow shows the percentage of the participants that rated severity of change between 1=no change to 4 systematically worse. The x axis is the number of item rated to a given level of severity. for example: 25% of participants rated at least 2 items to be "systematically a little worse", or 6 items to be "sometimes worse". ect.
 ```{r}
 EcogSeverity
-tiff("./ECog_scores.tiff",res = 400,width = 2400,height = 1600)
+tiff(here("ECog_scores.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(EcogSeverity,ncol = 1)
 dev.off()
 ```

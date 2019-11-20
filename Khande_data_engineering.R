@@ -1,10 +1,14 @@
 
 ## @knitr load_up_the_stuf
 
-require(haven)
-require(dplyr)
-require(ggplot2)
-require(reshape2)
+# ipak function: install and load multiple R packages.
+# check to see if packages are installed. Install them if they are not, then load them into the R session.
+
+
+# require(haven)
+# require(dplyr)
+# require(ggplot2)
+# require(reshape2)
 
 ##loading the new data
 w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfert5_2019Nov13/khandle_baseline_20191112.sas7bdat")
@@ -303,8 +307,8 @@ raw_data_averages$logEcog12 <- log(raw_data_averages$Ecog12_including_partial_av
 
 #creating a centered age and a centered age in decades(because effect sizes for 1 year are too small)
 raw_data_averages$Age_centered_75 <- scale(raw_data_averages$age,center = 75, scale = FALSE)
-raw_data_averages$Age_centered_75_decades <- raw_data_averages$Age_centered_75/10
-raw_data_averages$yrEDUCATION_centered <- scale(raw_data_averages$yrEDUCATION,center = 12, scale = FALSE)
+raw_data_averages$Age_centered_75_decades <- as.numeric(raw_data_averages$Age_centered_75/10)
+raw_data_averages$yrEDUCATION_centered <- as.numeric(scale(raw_data_averages$yrEDUCATION,center = 12, scale = FALSE))
 
 #Removing some missing data for key variables
 
@@ -326,5 +330,5 @@ DF<-DF[-which(is.na(DF$depression_01)),]
 
 
 ## saving the final version of the data tables (OUTSIDE OF THE GIT REPO)
-write.csv(raw_data_averages, "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")
+#write.csv(raw_data_averages, "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")
 

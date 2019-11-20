@@ -1,7 +1,7 @@
 ## @knitr Prepare_Data
 
-require(Hmisc)
-require(Gmisc)
+# require(Hmisc)
+# require(Gmisc)
 
 #an alternative is : https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html
 
