@@ -39,6 +39,12 @@ p_load("ggplot2",
               "here")
 ```
 
+#Loading data (change path accordingly)
+
+```{r}
+##loading the data : 
+w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfert5_2019Nov13/khandle_baseline_20191112.sas7bdat")
+```
 
 
 

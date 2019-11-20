@@ -10,8 +10,7 @@
 # require(ggplot2)
 # require(reshape2)
 
-##loading the new data
-w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfert5_2019Nov13/khandle_baseline_20191112.sas7bdat")
+
 
 #CS:  when this is read in, it's already a data frame so you don't need this line
 raw_data_sas <- as.data.frame(w1)
