@@ -1,10 +1,13 @@
 ## @knitr Prepare_Data
-
-require(Hmisc)
-require(Gmisc)
+# 
+#  library(Hmisc)
+#  library(Gmisc) #this is the one that makes table 1
 
 #an alternative is : https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html
 
+ # ====> skip to line 166
+  
+ 
 #---Creating functions 
 ##############################FUNCTIONS#########################
 
@@ -162,8 +165,8 @@ describeBoth <- function (x, iqr = F, html = TRUE, digits = 1, digits.nonzero = 
 ####################################################################################################3
 ###########   END  OF FUNCTIONS  ##############################
 #----
+
 DF<-as.data.frame(DF)
-#DF<-as.data.frame(raw_data_averages)
 
 DF$Age90 <- rep("FALSE",nrow(DF))#by pre-allocating this collumn with "FALSE" 
 #I make sure the next test puts a "TRUE" in those of age==90 and leaves no NA
@@ -171,59 +174,36 @@ DF$Age90 <- rep("FALSE",nrow(DF))#by pre-allocating this collumn with "FALSE"
 # so that you'd get 2 levels nTRUE=x,nFALSE=y,and missing=z ) when I actually just want n"TRUE"(% of the 1712 total)
 DF$Age90 <- factor(DF$age>=89.9,levels = c("TRUE","FALSE"))
 DF$GENDER <- factor(DF$GENDER, levels = c("Woman","Man"))
-#DF$GENDER <- factor(DF$GENDER, labels = c("Female","Male"))
 DF$RELATIVE_DEMENTIA<- factor(DF$RELATIVE_DEMENTIA,levels = c(1,0))
-DF$all<-rep("Total",nrow(DF))
+
+DF$all<-rep("Total",nrow(DF)) 
+#this line is critical because the function 'sorts' by a variable, if you have 
+#just one group with everyone you have to add a constant. (could be anything but
+#since it gets printed in the top of your table you don't want "foo" or "boo")
 
 #### Constructing the table1
 # Here we make one line at a time in a list (called T1)
 # this way we can display both description methods (Mean [sd] and Median [min-max])
 
 ## @knitr Table1
-DF$all<-rep("Total",nrow(DF))
 
 t1 <- list()
 
-t1[["Age"]] <-
-  getTable1Stats(DF$age,digits = 1)
-
-
-t1[["No. age 90+"]]<- 
-  getTable1Stats(DF$Age90,useNA="no")
-  
-
-t1[["Race/Ethnicity"]]<-
-  getTable1Stats(DF$race)
-  
-t1[["Gender (Women)"]] <-
-  getTable1Stats(DF$GENDER)
-  #getTable1Stats_both(DF$GENDER)
-
-t1[["Years of Education"]] <-
-  getTable1Stats(DF$yrEDUCATION,digits = 1)
-  #getTable1Stats_both(DF$yrEDUCATION)
-t1[["Depressive symptoms"]] <-
-  getTable1Stats(DF$depression_01)
-  #getTable1Stats_both(DF$nihtlbx_TScore)
-
-t1[["Family history of dementia"]]<-
-  getTable1Stats(DF$RELATIVE_DEMENTIA)
-
-#t1[["Semantic memory"]]<-
-#    getTable1Stats(DF$semantic_memory)
-    #getTable1Stats_both(DF$semantic_memory)
-t1[["Episodic memory score"]]<-
-    getTable1Stats(DF$adj_verbal_episodic_mem)
-    #getTable1Stats_both(DF$adj_verbal_episodic_mem)
-t1[["Executve function score"]]<-
-    #getTable1Stats_both(DF$executive_function)
-    getTable1Stats(DF$executive_function)
-t1[["ECog score"]] <-
-  getTable1Stats(DF$Ecog12_including_partial_averages)
+#CS:  I can't run this code from this point on because it can't find the "getDescriptionStatsBy function =/
+t1[["Age"]] <-getTable1Stats(DF$age,digits = 1)
+t1[["No. age 90+"]]<- getTable1Stats(DF$Age90,useNA="no")
+t1[["Race/Ethnicity"]]<-getTable1Stats(DF$race)
+t1[["Gender (Women)"]] <-getTable1Stats(DF$GENDER) #or getTable1Stats_both(DF$GENDER)
+t1[["Years of Education"]] <- getTable1Stats(DF$yrEDUCATION,digits = 1) #or getTable1Stats_both(DF$yrEDUCATION)
+t1[["Depressive symptoms"]] <- getTable1Stats(DF$depression_01) #getTable1Stats_both(DF$nihtlbx_TScore)
+t1[["Family history of dementia"]]<-getTable1Stats(DF$RELATIVE_DEMENTIA)
+t1[["Episodic memory score"]]<- getTable1Stats(DF$adj_verbal_episodic_mem) #getTable1Stats_both(DF$adj_verbal_episodic_mem)
+t1[["Executve function score"]]<-getTable1Stats(DF$executive_function) #getTable1Stats_both(DF$executive_function)
+t1[["ECog score"]] <-getTable1Stats(DF$Ecog12_including_partial_averages)
     #getTable1Stats_both(DF$Ecog12_including_partial_averages)
-t1[["log(ECog) score"]]<-
-  getTable1Stats(DF$logEcog12)
+t1[["log(ECog) score"]]<-getTable1Stats(DF$logEcog12)
 
+#and finally make the table1
 mergeDesc(c(t1),
           htmlTable_args = list(css.rgroup = "",
                                 caption  = ""))

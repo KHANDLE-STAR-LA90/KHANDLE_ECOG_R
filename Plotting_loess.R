@@ -5,6 +5,7 @@
 
 # raw_data_averages <- read.csv("/Users/fcorlier/Box Sync/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")[,2:538]
  ListOfVars <- c("semantic_memory","adj_verbal_episodic_mem","executive_function","age","GENDER","race","EDUCATION","yrEDUCATION",Ecog_12items, "RELATIVE_DEMENTIA","SIBLING_DEMENTIA","PARENTAL_DEMENTIA", "Ecog12_including_partial_averages","logEcog12","depression_01")
+ 
  DF1<-raw_data_averages[,ListOfVars]
 
 
@@ -16,6 +17,8 @@ require(rms)
 ##plot Ecog scores by SENAS sub-scores
 meltDF <- melt(data = DF1,
                measure.vars=colnames(raw_data_averages[,c("adj_verbal_episodic_mem","semantic_memory","executive_function")])) 
+
+#CS: this plot doesn't run for me if I try to do the facetting
 ggplot(data = meltDF,aes(x=meltDF$value,y=meltDF$logEcog12))+
   geom_point(alpha =0.9)+
   geom_smooth(method = "loess", span= 0.6)+
@@ -123,3 +126,4 @@ plot(x,spmodel$fitted.values,
         yaxt="none",
         ylab = "")
 points(x,y)
+

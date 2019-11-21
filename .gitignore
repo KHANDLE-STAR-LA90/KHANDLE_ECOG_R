@@ -1,14 +1,13 @@
 
-*.png
-*.RData
-*.rdx
-*.rdb
-Rmarkdown_scripts_and_outputs/sept10_2019/KHANDLE_ECOG_effect_modifier_project.html
-*.csv
-.Rproj.user/*
-.Rproj.user/D6BD0091/sources/s-247A465F/42699523-contents
-Rmarkdown_scripts_and_outputs/sept10_2019/KHANDLE_ECOG_effect_modifier_project_cache/html/__packages
-.Rhistory
-.Rproj.user
 *.tiff
 *.html
+*.png
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+Rmarkdown_scripts_and_outputs/KHANDLE_ECOG_effect_modifier_project.html
+Rmarkdown_scripts_and_outputs/KHANDLE_ECOG_effect_modifier_project_files/figure-html/
+Rmarkdown_scripts_and_outputs/Formated_regression_tables/Formatted_model_results_memory.html
+Rmarkdown_scripts_and_outputs/KHANDLE_ECOG_effect_modifier_project.html
+
