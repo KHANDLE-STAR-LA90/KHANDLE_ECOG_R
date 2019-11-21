@@ -23,25 +23,24 @@ if (!require("pacman"))
 ```{r,echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F }
 # usage
 p_load("ggplot2",
-              "knitr",
-              "reshape2",
-              "kableExtra",
-              "haven",
-              "dplyr",
-              "lspline",
-              "sjmisc",
-              "sjlabelled",
-              "sjPlot",
-              "Hmisc",
-              "rms",
-              "ggformula",
-              "Gmisc",
-              "here")
+       "knitr",
+       "reshape2",
+       "kableExtra",
+       "haven",
+       "dplyr",
+       "lspline",
+       "Hmisc",
+       "rms",
+       "ggformula",
+       "Gmisc",
+       "here",
+       "stargazer",
+       "ggpubr")
 ```
 
 #Loading data (change path accordingly)
 
-```{r}
+```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F }
 ##loading the data : 
 w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfert5_2019Nov13/khandle_baseline_20191112.sas7bdat")
 ```
@@ -67,7 +66,7 @@ knitr::opts_chunk$set(echo = F, cache = FALSE, warning=FALSE, message=FALSE)
  
 
 # List of authors: 
-Fabian W. Corlier (first), Crystal Shaw, Eleanor Larson, Daniel Mungas, Sarah Farias, Maria Glymour, Rachel Whitmer, (open to adding additional co-authors), Elizabeth Rose Mayeda (last)
+Fabian W. Corlier (first), Crystal Shaw, Eleanor Hayes-Larson, Daniel Mungas, Sarah Farias, Maria Glymour, Rachel Whitmer, (open to adding additional co-authors), Elizabeth Rose Mayeda (last)
 
 # Background/rationale: 
 Subjective cognitive decline predicts incidence of mild cognitive impairment and dementia among older adults without cognitive impairment [(Mitchell *et al*., 2014)](https://gala.gre.ac.uk/id/eprint/12228/1/12228_STUBBS_SMC_to_dementia_draft_Acta_resubmission_July_23_GALA_(AAM)_(2014_In_Press).pdf), suggesting self-reported cognitive decline may be a sensitive measure of cognitive change. However, most of this research has been conducted among highly educated non-Latino white participants recruited from memory clinics, and little is known about social factors that modify the correspondence between objectively measured cognitive function and subjective cognitive decline. Prior work has shown that anxiety and depressive symptoms influence the correspondence between objectively measured cognitive function and subjective cognitive decline such that people with higher levels of anxiety or depressive symptoms are more likely to report subjective cognitive decline for the same level of objectively measured cognitive function [(Hanninen *et al*. 1991; ](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1532-5415.1994.tb06064.x) [Schmand *et al*. 1997; ](https://www.cambridge.org/core/product/identifier/S0007125000148287/type/journal_article) [Reid *et al*. 2006,](https://www.karger.com/Article/Pdf/96295) reviewed in [Jonker *et al*. 2000)](http://doi.wiley.com/10.1002/1099-1166%28200011%2915%3A11%3C983%3A%3AAID-GPS238%3E3.0.CO%3B2-5). However, to our knowledge, no prior work has evaluated whether social factors modify the link between objectively measured cognitive function and subjective cognitive decline. For example, people with a family history of dementia may be more aware or concerned about subtle changes in cognitive function, which may result in people with a family history of dementia to report more subjective cognitive decline for at a given level of objectively measured cognitive function. 
@@ -248,17 +247,7 @@ baselinemodels <-list()
 baselinemodels[[1]]<-lm(raw_data_averages$logEcog12~raw_data_averages$adj_verbal_episodic_mem)
 baselinemodels[[2]]<-lm(raw_data_averages$logEcog12~raw_data_averages$executive_function)
 baselinemodels[[3]]<-lm(raw_data_averages$logEcog12~lspline::lspline(raw_data_averages$executive_function,knots = 1))
-    # require(texreg)
-    # htmlreg(baselinemodels, custom.note="%stars. htmlreg")
- 
-# base_model_comparison <-tab_model(baselinemodels, title = "Relation between ECog and objective cognitive performance", 
-#           auto.label = T,
-#           dv.labels = c("unadjusted memory","unadjusted executive function","executive function with linear splines"),
-#           digits = 3,
-#           ci.hyphen = ", ",
-#           file = here("BASE_MODELS.html"))
-# 
-# base_model_comparison
+stargazer(baselinemodels, tpe="text",out = here("basemodels.txt"))
 
 
 ```
@@ -340,13 +329,11 @@ In the following order :
 * "age + depressive symptoms"
 
 *********************************************************
-
-[a link to a formatted output here](`r here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","Formatted_model_results_memory.html")')
+```{r}
+episodic_memory_table
+```
 
 *********************************************************
-```{r}
-TwoVarMem
-```
 
 
 #### Predicted values
@@ -355,7 +342,7 @@ source(here('plotting_predicted_values.R'))
 ```
 
 ```{r}
-require(ggpubr)
+
 a <- FigureList[[1]]
 b <- FigureList[[2]]
 c <- FigureList[[3]]
@@ -395,16 +382,14 @@ f
 
 *********************************************************
 
-[A link to a formatted output here:](r `here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","2variable_models_executive.html")`)
-
-*********************************************************
 ```{r}
-TwoVarEx
+executive_function_table
 ```
+*********************************************************
 
 
 ```{r}
-require(ggpubr)
+
 a <- FigureList[[7]]
 b <- FigureList[[8]]
 c <- FigureList[[9]]
@@ -483,15 +468,7 @@ ggplot(data = tempDF, aes(logEcog12,predicted))+geom_point()+geom_smooth(method 
 ggtitle("Ecog =  EF(<1)*age + EF(>1)*age + EF(<1)*race + EF(>1)*race")
 ```
 
-### Full model
-
-And finally the full model with executive function (with all the above)
-
-*********************************************************
-
-[Formatted output of the full model here](r` here("Rmarkdown_scripts_and_outputs","Formated_regression_tables","full_model_executive.html")`)
-
-*********************************************************
+*****************************************************
 
 
 # Potential complementary approaches:
@@ -519,8 +496,8 @@ table(raw_data_averages$language,raw_data_averages$race, useNA = "ifany")
 source(here('plotting_NO_knot.R'))
 ```
 
-```{r}
-require(ggpubr)
+```{r, eval=FALSE, echo=FALSE}
+
 a <- FigureList[[13]]
 b <- FigureList[[14]]
 c <- FigureList[[15]]
@@ -541,7 +518,7 @@ ggarrange(
 dev.off()
 ```
 
-```{r, include=F, message=F}
+```{r, include=F, message=F, eval=FALSE}
 tiff(here("Figure3a.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(a,ncol = 1)
 dev.off()
@@ -563,7 +540,7 @@ dev.off()
 ```
 
 
-```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=T}
+```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=F}
 a
 b
 c
@@ -583,4 +560,8 @@ tiff(here("ECog_scores.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(EcogSeverity,ncol = 1)
 dev.off()
 ```
+
+
+
+
 
