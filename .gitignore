@@ -11,3 +11,6 @@ Rmarkdown_scripts_and_outputs/KHANDLE_ECOG_effect_modifier_project_files/figure-
 Rmarkdown_scripts_and_outputs/Formated_regression_tables/Formatted_model_results_memory.html
 Rmarkdown_scripts_and_outputs/KHANDLE_ECOG_effect_modifier_project.html
 
+*.rdb
+*.RData
+*.rdx
