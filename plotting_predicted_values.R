@@ -7,7 +7,7 @@
 #In some cases I use specific ranges to dismiss parts at which the data is sparse (e.g at exec function>1.5 for age=85)
 predrange<-c(-2.5,-1,0,0.5,1,2,2.5)
 
-require(ggformula)
+
 
 FigureList<-list()
 #below I'm generating hypothetical data for different exposures 
