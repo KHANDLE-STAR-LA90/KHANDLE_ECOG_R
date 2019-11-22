@@ -123,7 +123,7 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
                   group=factor(AGE_75_d,levels = c(1,0,-1)),
                   fill=factor(AGE_75_d,levels = c(1,0,-1))),
               alpha=0.15)+
-  geom_spline(aes(memory ,fit,
+  geom_line(aes(memory ,fit,
                 color=factor(AGE_75_d,
                              levels = c(1,0,-1)),
                 linetype=factor(AGE_75_d,
@@ -322,7 +322,7 @@ Ba <- ggplot(data = newDFage[range,])+
                   group=factor(AGE_75_d,levels = c(1,0,-1)),
                   fill=factor(AGE_75_d,levels = c(1,0,-1))),
               alpha=0.15)+
-  geom_spline(aes(ex_function,fit,
+  geom_line(aes(ex_function,fit,
                 color=factor(AGE_75_d,
                              levels = c(1,0,-1)),
                 linetype=factor(AGE_75_d,
@@ -418,7 +418,7 @@ Ed <- ggplot(data = newDFedu[range,])+
                   group=factor(yrEDU),
                   fill=factor(yrEDU)),
               alpha=0.15) +
-  geom_spline(aes(ex_function,fit,
+  geom_line(aes(ex_function,fit,
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
             size=1) + 
