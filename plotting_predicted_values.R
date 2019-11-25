@@ -131,7 +131,7 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
             size=1)+ 
   theme_minimal()+
   ylab("Predicted log(ECog)")+
-  xlab(element_blank())+
+  xlab(xlab)+
   theme(legend.justification=c(1,0), 
         legend.position=c(0.95,0.65),
         legend.direction = "vertical",
@@ -144,7 +144,9 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
                           labels = c("85","75","65"))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE)
+  guides(fill = FALSE,
+         linetype=FALSE,
+         color=FALSE)
 
 FigureList[[1]]<-Ba_mem
 
@@ -160,7 +162,7 @@ Ra_mem<-ggplot(data = newDFrace)+
             size=1)+ 
   theme_minimal()+
   ylab("Predicted log(ECog)")+
-  xlab(element_blank())+
+  xlab(xlab)+
   theme(legend.justification=c(1,0), 
         legend.position=c(.95,0.62),
         legend.title = element_blank(),
@@ -173,7 +175,9 @@ Ra_mem<-ggplot(data = newDFrace)+
         plot.margin = PM)+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE)
+  guides(fill = FALSE,
+         linetype=FALSE,
+         color=FALSE)
 
 
 FigureList[[2]]<- Ra_mem
@@ -195,7 +199,7 @@ Ge_mem<-ggplot(data = newDFgender)+
     size=1)+ 
   theme_minimal()+
   ylab("Predicted log(ECog)")+
-  xlab(element_blank())+
+  xlab(xlab)+
   theme(legend.justification=c(1,0), 
         legend.position=c(0.95,0.70),
         legend.spacing = unit(.1,"cm"),
@@ -207,7 +211,9 @@ Ge_mem<-ggplot(data = newDFgender)+
   scale_color_discrete(name= "Gender", labels=c("Women","Men"))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE)
+  guides(fill = FALSE,
+         linetype=FALSE,
+         color=FALSE)
 
 FigureList[[3]]<-Ge_mem
 
@@ -225,7 +231,7 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
             size=1) + 
   theme_minimal() +
   ylab("Predicted log(ECog)") + 
-  xlab(element_blank())+
+  xlab(xlab)+
   theme(legend.justification=c(1,0), 
         legend.position=c(.95,0.70),
         legend.direction = "vertical",
@@ -241,7 +247,9 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
                           labels = c("8 ","12 ","16 "))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE)
+  guides(fill = FALSE,
+         linetype=FALSE,
+         color=FALSE)
 
 FigureList[[4]]<-Ed_mem
 
@@ -273,7 +281,9 @@ Fh_mem <- ggplot(data = newDFfhist)+
                           labels = c("yes","no"))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE)
+  guides(fill = FALSE,
+         linetype=FALSE,
+         color=FALSE)
 
 FigureList[[5]]<-Fh_mem
 
@@ -291,7 +301,7 @@ Dpr_mem <- ggplot(data = newDFdepr)+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.73),
+        legend.position=c(0.95,0.6),
         legend.direction = "vertical",
         legend.text=element_text(size=textSize),
         legend.title = element_text(size=textSize),
@@ -303,7 +313,9 @@ Dpr_mem <- ggplot(data = newDFdepr)+
   scale_color_discrete(name="Depressive symptoms")+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
-  guides(fill = FALSE)
+  guides(fill = FALSE,
+         linetype=FALSE,
+         color=FALSE)
 
 FigureList[[6]]<-Dpr_mem
 
@@ -332,15 +344,14 @@ Ba <- ggplot(data = newDFage[range,])+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.65),
+        legend.position=c(0.95,0.6),
+        legend.title = element_blank(),
         legend.direction = "vertical",
         legend.text=element_text(size=textSize),
         legend.text.align=1,
         text = element_text(size = textSize))+
-  scale_color_discrete(name="Age (years)", 
-                       labels = c("85","75","65"))+
-  scale_linetype_discrete(name="Age (years)", 
-                          labels = c("85","75","65"))+
+  scale_color_discrete(labels = c("85","75","65"))+
+  scale_linetype_discrete(labels = c("85","75","65"))+
   coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
@@ -361,7 +372,7 @@ Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
   theme(legend.justification=c(1,0), 
-        legend.position=c(.95,0.62),
+        legend.position=c(.95,0.55),
         legend.title = element_blank(),
         legend.spacing = unit(.5, 'cm'),
         legend.direction = "vertical",
@@ -396,7 +407,7 @@ Ge<-ggplot(data = newDFgender)+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.70),
+        legend.position=c(0.95,0.60),
         legend.spacing = unit(.1,"cm"),
         legend.direction = "vertical",
         legend.text=element_text(size=textSize),
@@ -426,7 +437,7 @@ Ed <- ggplot(data = newDFedu[range,])+
   ylab("Predicted log(ECog)") + 
   xlab("Executive function")+
   theme(legend.justification=c(1,0), 
-        legend.position=c(.95,0.70),
+        legend.position=c(.95,0.6),
         legend.direction = "vertical",
         legend.text=element_text(size=textSize),
         legend.title = element_text(size=textSize),
@@ -460,7 +471,7 @@ Fh <- ggplot(data = newDFfhist)+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,.67),
+        legend.position=c(0.95,.6),
         legend.spacing = unit(0.2,"cm"),
         legend.text=element_text(size=textSize),
         legend.title = element_text(size=textSize),
@@ -491,7 +502,7 @@ Dpr <- ggplot(data = newDFdepr[1:20,])+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.73),
+        legend.position=c(0.95,0.6),
         legend.direction = "vertical",
         legend.text=element_text(size=textSize),
         legend.title = element_text(size=textSize),
