@@ -60,7 +60,8 @@ episodic_memory_table <- stargazer(memfit,type = "text",
           notes.append=FALSE,
           report=c("vcs"))
 
-episodic_memory_table2 <- stargazer(memfit,type = "text",
+episodic_memory_table2 <- stargazer(memfit,
+                                    type = "text",
                                    out = here("text_ouptput_memory2.txt"),
                                    ci = F,digits = 3,
                                    column.labels=c("Modifier: age","Modifier: Gender","Modifier: race/ethnicity","Modifier: Education","Modifier: Family hist.","Modifier: Depr. symptoms"),
