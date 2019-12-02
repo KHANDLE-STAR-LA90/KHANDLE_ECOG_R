@@ -334,3 +334,31 @@ DF<-DF[DF$Ecog12_missing<7,]
 ## saving the final version of the data tables (OUTSIDE OF THE GIT REPO)
 #write.csv(raw_data_averages, "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")
 
+ require(tableone)
+ memory_bin <- factor(cut(DF$adj_verbal_episodic_mem,c(-4,0,4)),labels = c("0 and less","more than 0"))
+ executive_fn_bin <- factor(cut(DF$executive_function,c(-4,0,4)),labels = c("0 and less","more than 0"))
+ Age_bin <- factor(cut(DF$age,c(65,75,85,150)),labels = c("75 and less","(75-85]","85+"))
+ Edu_bin <- factor(cut(DF$yrEDUCATION,c(0,12,16,22)),labels = c("12 and less","(12-16]","16+"))
+ Depressive_Smpt_bin <- factor(cut(DF$depression_01,c(-4,0,4)),labels = c("0 and less","more than 0"))
+ Race_bin <- factor(DF$race, labels = c("Asian", "Black", "Latino", "Non-Latino-White"))
+ fam_hist_bin <- factor(DF$RELATIVE_DEMENTIA)
+ 
+ Tbl_bin <- cbind(memory_bin,executive_fn_bin,Age_bin,DF$GENDER,Race_bin,Edu_bin,Depressive_Smpt_bin,fam_hist_bin)
+ Tbl_bin <- as.data.frame(Tbl_bin)
+ Tbl_bin$memory_bin <- factor(memory_bin)
+ Tbl_bin$executive_fn_bin <- factor(executive_fn_bin)
+ Tbl_bin$Age_bin <- factor(Age_bin)
+ Tbl_bin$Race_bin <- factor(Race_bin)
+ Tbl_bin$Edu_bin <- factor(Edu_bin)
+ Tbl_bin$Depressive_Smpt_bin<-factor(Depressive_Smpt_bin)
+ Tbl_bin$fam_hist_bin <- factor(fam_hist_bin)
+ Tbl_bin$logEcog<-DF$logEcog12
+ 
+ colnames(Tbl_bin)<-c("Episodic memory","Executive function","Age","Gender","Race/Ethnicity","Educational attainment", "Depressive_symptoms","Family_history","logEcog")
+ 
+ TblEcog <- list()
+ for(n in dput(names(Tbl_bin))){
+   TblEcog[[n]] <- CreateTableOne(vars= c("logEcog"),strata = n,data = Tbl_bin,test = F )
+ }
+ saveRDS(TblEcog,file = here("Ecog_table.rds"))
+ 
