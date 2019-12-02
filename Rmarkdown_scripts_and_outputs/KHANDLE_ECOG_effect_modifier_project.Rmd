@@ -34,7 +34,8 @@ p_load("ggplot2",
        "Gmisc",
        "here",
        "stargazer",
-       "ggpubr")
+       "ggpubr",
+       "tableone")
 ```
 
 #Loading data (change path accordingly)
