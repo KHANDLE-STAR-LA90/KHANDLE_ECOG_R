@@ -108,10 +108,13 @@ predggdpr <- predict.lm(results_execfun[[6]],
 
 plots_list<-list()
 textSize <- 12
-PM<- margin(.2, 0.2, .2, .5, "cm")
-limin <- -0.02
-limax <- 0.8
+PM<- margin(.2, 0.2, .8, .5, "cm")
+limin <- 0
+limax <- 0.6
+xlim<-c(-2,2)
 xlab="Episodic memory"
+xmarks <- scale_x_continuous(breaks=seq(-2,2,0.5))
+
 #plots for episodic memory
 #base model with age only
 
@@ -129,21 +132,24 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
                 linetype=factor(AGE_75_d,
                                 levels = c(1,0,-1))),
             size=1)+ 
-  theme_minimal()+
+  #theme_()+
   ylab("Predicted log(ECog)")+
   xlab(xlab)+
+  theme_classic2()+
   theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.65),
-        legend.direction = "vertical",
+        legend.position="top",#c(0.95,0.65),
+        legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
         legend.text.align=1,
-        text = element_text(size = textSize))+
+        text = element_text(size = textSize),
+        plot.margin = margin(.5, .2, .8, .5, "cm"))+
   scale_color_discrete(name="Age (years)", 
                        labels = c("85","75","65"))+
   scale_linetype_discrete(name="Age (years)", 
                           labels = c("85","75","65"))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
+  xmarks+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
@@ -160,7 +166,7 @@ Ra_mem<-ggplot(data = newDFrace)+
                 color=race,
                 linetype=race),
             size=1)+ 
-  theme_minimal()+
+  theme_classic2()+
   ylab("Predicted log(ECog)")+
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
@@ -173,8 +179,8 @@ Ra_mem<-ggplot(data = newDFrace)+
         legend.title.align=1,
         text = element_text(size = textSize),
         plot.margin = PM)+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
-                  default = FALSE, clip = "on")+
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
+                  default = FALSE, clip = "on")+xmarks+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
@@ -197,7 +203,7 @@ Ge_mem<-ggplot(data = newDFgender)+
         color=factor(GENDER,levels = c("Woman","Man")),
         linetype=factor(GENDER,levels = c("Woman","Man"))),
     size=1)+ 
-  theme_minimal()+
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
@@ -206,10 +212,11 @@ Ge_mem<-ggplot(data = newDFgender)+
         legend.direction = "vertical",
         legend.text=element_text(size=textSize),
         legend.title.align=0,
-        text = element_text(size = textSize))+
+        text = element_text(size = textSize),
+        plot.margin = PM)+
   scale_linetype_discrete(name= "Gender",labels=c("Women","Men"))+
   scale_color_discrete(name= "Gender", labels=c("Women","Men"))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE,
          linetype=FALSE,
@@ -229,7 +236,7 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
             size=1) + 
-  theme_minimal() +
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
@@ -240,12 +247,10 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
         legend.text.align=0,
         legend.title.align=1,
         text = element_text(size = textSize),
-        plot.margin = PM)+
-  scale_color_discrete(name="Years of education", 
-                       labels = c("8 ","12 ","16 "))+
-  scale_linetype_discrete(name="Years of education", 
-                          labels = c("8 ","12 ","16 "))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+        plot.margin = margin(.5, .2, .8, .5, "cm"))+
+  scale_color_discrete(labels = c("8 ","12 ","16 "))+
+  scale_linetype_discrete(labels = c("8 ","12 ","16 "))+
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE,
          linetype=FALSE,
@@ -265,21 +270,20 @@ Fh_mem <- ggplot(data = newDFfhist)+
                 linetype=factor(F_Hist,
                                 levels = c(1,0))),
             size=1) + 
-  theme_minimal() +
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
         legend.position=c(0.95,.67),
         legend.spacing = unit(0.2,"cm"),
         legend.text=element_text(size=textSize),
-        legend.title = element_text(size=textSize),
+        legend.title = element_blank(),
         legend.title.align=0,
-        text = element_text(size = textSize))+
-  scale_color_discrete(name="Family history of dementia", 
-                       labels = c("yes","no"))+
-  scale_linetype_discrete(name="Family history of dementia", 
-                          labels = c("yes","no"))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_color_discrete(labels = c("yes","no"))+
+  scale_linetype_discrete(labels = c("yes","no"))+
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE,
          linetype=FALSE,
@@ -297,7 +301,7 @@ Dpr_mem <- ggplot(data = newDFdepr)+
                 color=factor(depression_01,levels = c(1,0,-1)),
                 linetype=factor(depression_01,levels = c(1,0,-1))),
             size=1) + 
-  theme_minimal() +
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
   theme(legend.justification=c(1,0), 
@@ -308,10 +312,10 @@ Dpr_mem <- ggplot(data = newDFdepr)+
         legend.text.align=0,
         legend.title.align=0,
         text = element_text(size = textSize),
-        plot.margin = PM)+
+        plot.margin = margin(0.2,0.2,0.2,0.5,"cm"))+
   scale_linetype_discrete(name="Depressive symptoms")+
   scale_color_discrete(name="Depressive symptoms")+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE,
          linetype=FALSE,
@@ -340,19 +344,20 @@ Ba <- ggplot(data = newDFage[range,])+
                 linetype=factor(AGE_75_d,
                                 levels = c(1,0,-1))),
             size=1)+ 
-  theme_minimal()+
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.6),
+  theme(legend.justification=c(0.5,0), 
+        legend.position="top",#c(0.95,0.6),
         legend.title = element_blank(),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
         legend.text.align=1,
-        text = element_text(size = textSize))+
+        text = element_text(size = textSize),
+        plot.margin = margin(.5, 0.2, .8, .5, "cm"))+
   scale_color_discrete(labels = c("85","75","65"))+
   scale_linetype_discrete(labels = c("85","75","65"))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 Ba
@@ -368,20 +373,20 @@ Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
                 color=race,
                 linetype=race),
             size=1)+ 
-  theme_minimal()+
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(.95,0.55),
+  theme(legend.justification=c(0.85,0), 
+        legend.position="top",#c(.95,0.55),
         legend.title = element_blank(),
         legend.spacing = unit(.5, 'cm'),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
         legend.text.align=0,
         legend.title.align=1,
         text = element_text(size = textSize),
         plot.margin = PM)+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 
@@ -403,19 +408,21 @@ Ge<-ggplot(data = newDFgender)+
         color=factor(GENDER,levels = c("Woman","Man")),
         linetype=factor(GENDER,levels = c("Woman","Man"))),
     size=1)+ 
-  theme_minimal()+
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.60),
+  theme(legend.justification=c(0.5,0), 
+        legend.position="top",#c(0.95,0.60),
         legend.spacing = unit(.1,"cm"),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
+        legend.title = element_blank(),
         legend.text=element_text(size=textSize),
         legend.title.align=0,
-        text = element_text(size = textSize))+
-  scale_linetype_discrete(name= "Gender",labels=c("Women","Men"))+
-  scale_color_discrete(name= "Gender", labels=c("Women","Men"))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_linetype_discrete(labels=c("Women","Men"))+
+  scale_color_discrete(labels=c("Women","Men"))+
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 
@@ -433,23 +440,23 @@ Ed <- ggplot(data = newDFedu[range,])+
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
             size=1) + 
-  theme_minimal() +
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab("Executive function")+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(.95,0.6),
-        legend.direction = "vertical",
+  theme(legend.justification=c(0.8,0), 
+        legend.position="top",#c(.95,0.6),
+        legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
-        legend.title = element_text(size=textSize),
+        legend.title = element_blank(),
         legend.text.align=0,
         legend.title.align=1,
         text = element_text(size = textSize),
-        plot.margin = PM)+
-  scale_color_discrete(name="Years of education", 
+        plot.margin = margin(.2, 0.2, .8, .5, "cm"))+
+  scale_color_discrete( 
                        labels = c("8 ","12 ","16 "))+
-  scale_linetype_discrete(name="Years of education", 
+  scale_linetype_discrete( 
                           labels = c("8 ","12 ","16 "))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 Ed
@@ -467,21 +474,23 @@ Fh <- ggplot(data = newDFfhist)+
                 linetype=factor(F_Hist,
                                 levels = c(1,0))),
             size=1) + 
-  theme_minimal() +
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,.6),
+  theme(legend.justification=c(0.75,0), 
+        legend.position="top",#c(0.95,.6),
+        legend.direction = "horizontal",
         legend.spacing = unit(0.2,"cm"),
         legend.text=element_text(size=textSize),
-        legend.title = element_text(size=textSize),
+        legend.title = element_blank(),
         legend.title.align=0,
-        text = element_text(size = textSize))+
-  scale_color_discrete(name="Family history of dementia", 
+        text = element_text(size = textSize),
+        plot.margin = PM)+
+  scale_color_discrete( 
                        labels = c("yes","no"))+
-  scale_linetype_discrete(name="Family history of dementia", 
+  scale_linetype_discrete( 
                           labels = c("yes","no"))+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 
@@ -498,21 +507,21 @@ Dpr <- ggplot(data = newDFdepr[1:20,])+
                 color=factor(depression_01,levels = c(1,0,-1)),
                 linetype=factor(depression_01,levels = c(1,0,-1))),
             size=1) + 
-  theme_minimal() +
+  theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(0.95,0.6),
-        legend.direction = "vertical",
+  theme(legend.justification=c(.85,0), 
+        legend.position="top",#c(0.95,0.6),
+        legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
-        legend.title = element_text(size=textSize),
+        legend.title = element_text(size = textSize),
         legend.text.align=0,
         legend.title.align=0,
         text = element_text(size = textSize),
-        plot.margin = PM)+
-  scale_linetype_discrete(name="Depressive symptoms")+
-  scale_color_discrete(name="Depressive symptoms")+
-  coord_cartesian(xlim = NULL, ylim = c(limin,limax), expand = FALSE,
+        plot.margin = margin(t= .2, r= .2, b= .2, l= .5,"cm"))+
+  scale_linetype_discrete(name="Standardized scores")+
+  scale_color_discrete(name="Standardized scores")+
+  coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 

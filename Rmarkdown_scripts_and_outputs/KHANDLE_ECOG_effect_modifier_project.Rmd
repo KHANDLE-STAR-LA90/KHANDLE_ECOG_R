@@ -42,7 +42,7 @@ p_load("ggplot2",
 
 ```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE, cache=F }
 ##loading the data : 
-w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfert5_2019Nov13/khandle_baseline_20191112.sas7bdat")
+w1 <- read_sas("C:/Users/fcorlier/Box/KANDLE_coded_data/Raw_data_tables/W1/transfer6_2019Dec16/khandle_baseline_20191216.sas7bdat")
 ```
 
 
@@ -360,16 +360,21 @@ j <- FigureList[[10]]
 k <- FigureList[[11]]
 l <- FigureList[[12]]
 #saving one big composite figure
+
+```
+
+```{r}
+
 string<-here("Figure1_ggarange.tiff")
 
 tiff(string,res = 300,width = 2550, height = 3300)
 ggarrange(
   annotate_figure(ggarrange(a,g,
-            labels = c("a","b"),ncol = 2),top = text_grob("Modifier: Age",size = 14, face = "bold")),
+            labels = c("A","B"),ncol = 2,common.legend = TRUE, legend="top"),fig.lab = "Modifier: Age",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
   annotate_figure(ggarrange(c,i,
-            labels = c("c","d"),ncol = 2),top = text_grob("Modifier: Gender",size = 14, face = "bold")),
+            labels = c("C","D"),ncol = 2,common.legend = TRUE, legend="top"),fig.lab = "Modifier: Gender",fig.lab.size = 14, fig.lab.face = "bold"),
     annotate_figure(ggarrange(b,h,
-            labels = c("e","f"),ncol = 2),top = text_grob("Modifier: Race/ethnicity",size = 14, face="bold")),
+            labels = c("E","F"),ncol = 2,common.legend = TRUE, legend="top"),fig.lab = "Modifier: Race/ethnicity",fig.lab.size = 14, fig.lab.face="bold"),
   nrow = 3)
 dev.off()
 ```
@@ -398,23 +403,17 @@ executive_function_table
 
 
 ```{r}
-# 
-# a <- FigureList[[7]]
-# b <- FigureList[[8]]
-# c <- FigureList[[9]]
-# d <- FigureList[[10]]
-# e <- FigureList[[11]]
-# f <- FigureList[[12]]
+
 #saving one big composite figure
 string<-paste0(here("Figure2_ggarange.tiff"))
 tiff(string,res = 300,width = 2550, height = 3300)
 ggarrange(
   annotate_figure(ggarrange(d,j,
-            labels = c("a","b"),ncol = 2),top = text_grob("Modifier: Educational attainment",size = 14, face = "bold")),
+            labels = c("G","H"),ncol = 2, common.legend = TRUE, legend="top"),fig.lab = "Modifier: Educational attainment (in years)",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
   annotate_figure(ggarrange(e,k,
-            labels = c("c","d"),ncol = 2),top = text_grob("Modifier: Family history of dementia",size = 14, face="bold")),
+            labels = c("I","J"),ncol = 2, common.legend = TRUE, legend="top"),fig.lab ="Modifier: Family history of dementia",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
   annotate_figure(ggarrange(f,l,
-            labels = c("e","f"),ncol = 2),top = text_grob("Modifier: Depressive symptoms",size = 14, face="bold")),
+            labels = c("K","L"),ncol = 2, common.legend = TRUE, legend="top"),fig.lab ="Modifier: Depressive symptoms",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
   nrow = 3)
 dev.off()
 ```
@@ -570,7 +569,7 @@ f
 If so where to choose the cut-off ?
 If we count the % of the population that reports at least 1 item rated as systematically much worse, we get 12.5% which is about what is reported by the CDC paper from Taylor et al.
 The plot bellow shows the percentage of the participants that rated severity of change between 1=no change to 4 systematically worse. The x axis is the number of item rated to a given level of severity. for example: 25% of participants rated at least 2 items to be "systematically a little worse", or 6 items to be "sometimes worse". ect.
-```{r}
+```{r, eval=F}
 EcogSeverity
 tiff(here("ECog_scores.tiff"),res = 400,width = 2400,height = 1600)
 ggarrange(EcogSeverity,ncol = 1)
