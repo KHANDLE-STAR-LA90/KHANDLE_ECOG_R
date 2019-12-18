@@ -314,9 +314,15 @@ Executive function:
 
 
 ```{r fig.show="hold", out.width="50%", fig.cap="histogram of residuals and plot of predicted values",cache=FALSE}
+DFmem <- DF[,c("logEcog12","memory","AGE_75_d","race","GENDER","yrEDU","F_Hist","depression_01")]
+DFmem <- data.frame(DFmem)
 predicted <- predict.lm(memfit[[1]])
-hist(memfit[[1]]$residuals)
-ggplot(data = DFmem, aes(DFmem$logEcog12,predicted))+geom_point()+geom_smooth(method = "loess")+ggtitle("base model predicted values vs observed values")
+tiff(here("diagnostic_plot1.tif"),res = 400,width = 2400,height = 1600 )
+hist(memfit[[1]]$residuals, xlab = "Residuals", main ="")
+dev.off()
+tiff(here("diagnostic_plot2.tif"),res = 400,width = 2400,height = 1600 )
+ggplot(data = DFmem, aes(logEcog12,predicted))+geom_point()+geom_smooth(method = "loess")+ylab("Predicted log(ECog scores)") + xlab("Observed log(ECog scores)")+theme_bw()
+dev.off()
 ```
 
 

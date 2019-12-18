@@ -78,7 +78,7 @@ plot(x,mRCS$fitted.values,
      xlim = c(min(x),max(x)),
      ylim = c(min(y),max(y)),
      xlab="Episodic memory scores",
-     ylab = "Fitted log(ECog scores)")
+     ylab = "Predicted log(ECog scores)")
 points(x,y)
 #title("Episodic memory scores")
 
