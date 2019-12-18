@@ -361,28 +361,28 @@ DF<-DF[-which(is.na(DF$depression_01)),]
  }
  saveRDS(TblEcog,file = here("Ecog_table.rds"))
 
- ECOG_vales <- readRDS(file = "../KHANDLE_PROTECTED_DATA_RESULTS_ERM/Ecog_table.rds")
- 
- Table_Ecog <- data.frame()
- 
- EM <- unlist(ECOG_vales[[1]]$ContTable)
- EF <- unlist(ECOG_vales[[2]]$ContTable)
- Age <- unlist(ECOG_vales[[3]]$ContTable)
- Gen <- unlist(ECOG_vales[[4]]$ContTable)
- race <-unlist(ECOG_vales[[5]]$ContTable)
- edu<- unlist(ECOG_vales[[6]]$ContTable)
- Dep <- unlist(ECOG_vales[[7]]$ContTable)
- Fam <- unlist(ECOG_vales[[8]]$ContTable)
- 
- 
- Table_Ecog_Episodic_mem <- matrix(EM,ncol = 12,byrow = T)    
- Table_Ecog_Executive_fun <- matrix(EF,ncol = 12,byrow = T)
- Table_Ecog_age <- matrix(Age,ncol = 12,byrow = T)
- Table_Ecog_gender <- matrix(Gen,ncol = 12,byrow = T)
- Table_Ecog_race <- matrix(race,ncol = 12,byrow = T)
- Table_Ecog_edu <- matrix(edu,ncol = 12,byrow = T)
- Table_Ecog_depr <- matrix(Dep,ncol = 12,byrow = T)
- Table_Ecog_FamH <- matrix(Fam,ncol = 12,byrow = T)
- 
- Table_Ecog <- rbind(Table_Ecog_Episodic_mem,Table_Ecog_Executive_fun,Table_Ecog_age,Table_Ecog_gender,Table_Ecog_race,Table_Ecog_edu,Table_Ecog_depr, Table_Ecog_FamH)
- 
+ # ECOG_vales <- readRDS(file = "../KHANDLE_PROTECTED_DATA_RESULTS_ERM/Ecog_table.rds")
+ # 
+ # Table_Ecog <- data.frame()
+ # 
+ # EM <- unlist(ECOG_vales[[1]]$ContTable)
+ # EF <- unlist(ECOG_vales[[2]]$ContTable)
+ # Age <- unlist(ECOG_vales[[3]]$ContTable)
+ # Gen <- unlist(ECOG_vales[[4]]$ContTable)
+ # race <-unlist(ECOG_vales[[5]]$ContTable)
+ # edu<- unlist(ECOG_vales[[6]]$ContTable)
+ # Dep <- unlist(ECOG_vales[[7]]$ContTable)
+ # Fam <- unlist(ECOG_vales[[8]]$ContTable)
+ # 
+ # 
+ # Table_Ecog_Episodic_mem <- matrix(EM,ncol = 12,byrow = T)    
+ # Table_Ecog_Executive_fun <- matrix(EF,ncol = 12,byrow = T)
+ # Table_Ecog_age <- matrix(Age,ncol = 12,byrow = T)
+ # Table_Ecog_gender <- matrix(Gen,ncol = 12,byrow = T)
+ # Table_Ecog_race <- matrix(race,ncol = 12,byrow = T)
+ # Table_Ecog_edu <- matrix(edu,ncol = 12,byrow = T)
+ # Table_Ecog_depr <- matrix(Dep,ncol = 12,byrow = T)
+ # Table_Ecog_FamH <- matrix(Fam,ncol = 12,byrow = T)
+ # 
+ # Table_Ecog <- rbind(Table_Ecog_Episodic_mem,Table_Ecog_Executive_fun,Table_Ecog_age,Table_Ecog_gender,Table_Ecog_race,Table_Ecog_edu,Table_Ecog_depr, Table_Ecog_FamH)
+ # 

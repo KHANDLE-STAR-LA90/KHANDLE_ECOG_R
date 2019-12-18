@@ -16,15 +16,19 @@ require(rms)
 
 ##plot Ecog scores by SENAS sub-scores
 meltDF <- melt(data = DF1,
-               measure.vars=colnames(raw_data_averages[,c("adj_verbal_episodic_mem","semantic_memory","executive_function")])) 
-
+               measure.vars=colnames(raw_data_averages[,c("adj_verbal_episodic_mem","executive_function")])) 
+xmarks <- scale_x_continuous(breaks=seq(-2.5,2.5,0.5))
 #CS: this plot doesn't run for me if I try to do the facetting
-ggplot(data = meltDF,aes(x=meltDF$value,y=meltDF$logEcog12))+
+gg<- ggplot(data = meltDF,aes(x=meltDF$value,y=meltDF$logEcog12))+
   geom_point(alpha =0.9)+
   geom_smooth(method = "loess", span= 0.6)+
   facet_wrap(.~variable)+
-  theme(axis.title.x = element_blank(),axis.text.x=element_text(angle=90,size=11))
+  theme(axis.title.x = element_blank(),axis.text.x=element_text(angle=90,size=11),axis.title.y = element_text("log(ECog scores)"))+
+  xmarks
 
+tiff(here("loess_pot.tif"),res = 400,width = 2400,height = 1600 )
+ggarrange(gg)
+dev.off()
 
 # ggplot(data = meltDF,aes(x=meltDF$value,y=meltDF$logEcog12, color=factor(cut(age,c(65,80,90)))))+
 #   geom_point(alpha =0.9)+
@@ -67,33 +71,20 @@ x<-DF2[,"adj_verbal_episodic_mem"]
 mRCS <- ols(DF2[,1]~rcs(x, 
                   quantile(x,c(0, .05, .275, .5, .775, .95, 1),
                            include.lowest=T,na.rm = F)))
+tiff(here("Memory_RCS.tif"),res = 400,width = 2400,height = 1600 )
 
 plot(x,mRCS$fitted.values,
      col = "red",
      xlim = c(min(x),max(x)),
-     ylim = c(min(y),max(y)))
+     ylim = c(min(y),max(y)),
+     xlab="Episodic memory scores",
+     ylab = "Fitted log(ECog scores)")
 points(x,y)
-title("adj_verbal_episodic_mem")
+#title("Episodic memory scores")
 
+dev.off()
       
-DF2 <- na.omit(DF1[,c("logEcog12","semantic_memory")])
-      
-      y<- DF2$logEcog12
-      x<-DF2$semantic_memory
-      #x<-DF2$executive_function
-      
-      mRCS <- ols(DF2[,1]~rcs(x, 
-                              quantile(x,c(0, .05, .275, .5, .775, .95, 1),
-                                       include.lowest=T)))
-      
-      plot(x,mRCS$fitted.values,
-           col = "red",
-           xlim = c(min(x),max(x)),
-           ylim = c(min(y),max(y)),
-           yaxt= "none",
-           ylab = "")
-      points(x,y)
-      title("semantic_memory")
+
       
 
 DF2 <- na.omit(DF1[,c("logEcog12","executive_function")])
@@ -105,16 +96,17 @@ x<-DF2$executive_function
 mRCS <- ols(DF2[,1]~rcs(x, 
                         quantile(x,c(0, .05, .275, .5, .775, .95, 1),
                                  include.lowest=F)))
-
+tiff(here("Exec_fun_RCS.tif"),res = 400,width = 2400,height = 1600 )
 plot(x,mRCS$fitted.values,
            col = "red",
            xlim = c(min(x),max(x)),
            ylim = c(min(y),max(y)),
           yaxt="none",
-          ylab = "")
+          ylab = "",
+          xlab = "Executive function scores")
       points(x,y)
-      title("executive_function")
-
+      #title("Executive function scores")
+      dev.off()
 ## @knitr Ecog_vs_SENAS_lsp
       
 spmodel <- rms::ols(DF2$logEcog12~ 
@@ -124,6 +116,7 @@ plot(x,spmodel$fitted.values,
         xlim = c(min(x),max(x)),
         ylim = c(min(y),max(y)),
         yaxt="none",
-        ylab = "")
+        ylab = "",
+        xlab="")
 points(x,y)
 
