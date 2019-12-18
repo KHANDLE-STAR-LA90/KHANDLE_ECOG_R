@@ -108,9 +108,9 @@ raw_data_clean[which(raw_data_clean[,"race"]=="Refused/Missing"),"race"] <- NA
 raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==1),"CONCERNED_THINKING"] <- "Yes"
 raw_data_clean[which(raw_data_clean[,"CONCERNED_THINKING"]==2),"CONCERNED_THINKING"] <- "No"
 
-#Language
-raw_data_clean$language<-ifelse(raw_data_clean$LANG==2058,"SPANISH","ENGLISH")
-raw_data_clean$language<-as.factor(raw_data_clean$language)
+# #Language
+# raw_data_clean$language<-ifelse(raw_data_clean$LANG==2058,"SPANISH","ENGLISH")
+# raw_data_clean$language<-as.factor(raw_data_clean$language)
 ## ----
 #Creating a short verion of the Ecog (based of 12 items)
 Ecog_12items <- c("ECOG_MEM1","ECOG_MEM2","ECOG_LANG1","ECOG_LANG2",
