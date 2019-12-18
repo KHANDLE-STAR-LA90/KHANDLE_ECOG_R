@@ -273,29 +273,29 @@ raw_data_averages$Ecog12_including_partial_averages <- DF$Ecog12_including_parti
 raw_data_averages$Ecog12_missing <- DF$Ecog12_missing
 
 ##############################################################
-# #creating a special table of people that report various levels of impairment (experimental)
-Ecog_counts <- data.frame(lvl=factor(rep(1:4,each=12)),Nitems=factor(rep(1:12,times=4)) ,count=rep(0,48))
-for(lvl in 1:4){
-    binary_SCD <- ifelse(DF[,Ecog_12items]== lvl,1,0)
-  for(n in 1:12){
-    sumSCD<- rowSums(binary_SCD,na.rm = T)
-    binSCD <- ifelse(sumSCD >= n,1,0)
-    Ecog_counts[lvl*12-12+n,3]<- (sum(binSCD,na.rm = T)/1617)*100
-  }
-}
-
-require(ggplot2)
-EcogSeverity <-ggplot(Ecog_counts)+
-  geom_line(aes(x=Ecog_counts$Nitems,y=Ecog_counts$count,
-                                  group=Ecog_counts$lvl,colour=Ecog_counts$lvl),
-            size=1.2)+
-  xlab("Number of items")+
-  ylab("Percentage of the population")+
-  scale_color_discrete(name= "Perceived change in 10 years", 
-                       labels=c("no change","sometimes","systematically a little worse","systematically much worse"))+
-  theme(legend.justification=c(1,0), 
-        legend.position=c(0.99,0.69),
-        text = element_text(size=14))
+# # #creating a special table of people that report various levels of impairment (experimental)
+# Ecog_counts <- data.frame(lvl=factor(rep(1:4,each=12)),Nitems=factor(rep(1:12,times=4)) ,count=rep(0,48))
+# for(lvl in 1:4){
+#     binary_SCD <- ifelse(DF[,Ecog_12items]== lvl,1,0)
+#   for(n in 1:12){
+#     sumSCD<- rowSums(binary_SCD,na.rm = T)
+#     binSCD <- ifelse(sumSCD >= n,1,0)
+#     Ecog_counts[lvl*12-12+n,3]<- (sum(binSCD,na.rm = T)/1617)*100
+#   }
+# }
+# 
+# require(ggplot2)
+# EcogSeverity <-ggplot(Ecog_counts)+
+#   geom_line(aes(x=Ecog_counts$Nitems,y=Ecog_counts$count,
+#                                   group=Ecog_counts$lvl,colour=Ecog_counts$lvl),
+#             size=1.2)+
+#   xlab("Number of items")+
+#   ylab("Percentage of the population")+
+#   scale_color_discrete(name= "Perceived change in 10 years", 
+#                        labels=c("no change","sometimes","systematically a little worse","systematically much worse"))+
+#   theme(legend.justification=c(1,0), 
+#         legend.position=c(0.99,0.69),
+#         text = element_text(size=14))
 # ###############################################################
 ################################################################################
 
@@ -312,6 +312,7 @@ raw_data_averages$yrEDUCATION_centered <- as.numeric(scale(raw_data_averages$yrE
 #Removing some missing data for key variables
 
 DF<-DF[-which(is.na(DF$logEcog12)),]
+DF<-DF[DF$Ecog12_missing<7,]
 DF<-DF[-which(is.na(DF$executive_function)),]
 DF<-DF[-which(is.na(DF$adj_verbal_episodic_mem)),]
 DF$race <- factor(DF$race)
@@ -319,16 +320,15 @@ DF<-DF[-which(is.na(DF$race)),]
 DF$age <- as.numeric(DF$age)
 DF<-DF[-which(is.na(DF[,c("yrEDUCATION")])),]
 DF<-DF[-which(is.na(DF$depression_01)),]
-DF<-DF[DF$Ecog12_missing<7,]
 
 #same for raw_data_avg
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$logEcog12)),]
+ raw_data_averages <- raw_data_averages[raw_data_averages$Ecog12_missing<7,]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$executive_function)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$adj_verbal_episodic_mem)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$race)),]
   raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$yrEDUCATION)),]
  raw_data_averages<-raw_data_averages[-which(is.na(raw_data_averages$depression_01)),]
- raw_data_averages <- raw_data_averages[raw_data_averages$Ecog12_missing<7,]
 
 ## saving the final version of the data tables (OUTSIDE OF THE GIT REPO)
 #write.csv(raw_data_averages, "/Users/fcorlier/Box/Fabian_ERM_Box/Khandle_data_analysis_FABIAN/R_KHANDLE_project_data/raw_data_averages.csv")
