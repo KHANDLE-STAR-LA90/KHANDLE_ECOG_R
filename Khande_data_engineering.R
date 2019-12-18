@@ -240,7 +240,6 @@ ListOfVars <- c("semantic_memory",
                 "RELATIVE_DEMENTIA",
                 "SIBLING_DEMENTIA",
                 "PARENTAL_DEMENTIA",
-                "language",
                 "depression_01")
 DF<-raw_data_averages[,ListOfVars]
 
