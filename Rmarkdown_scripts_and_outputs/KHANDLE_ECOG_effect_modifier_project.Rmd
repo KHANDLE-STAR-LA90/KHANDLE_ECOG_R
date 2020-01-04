@@ -88,7 +88,7 @@ Does the correspondence between objectively measured of cognitive function (SENA
 
 ## DAG
 
-```{r}
+```{r, eval=FALSE}
 knitr::include_graphics(here('Screenshot_dag.png')) 
 ```
 
@@ -373,14 +373,25 @@ l <- FigureList[[12]]
 
 string<-here("Figure1_ggarange.tiff")
 
-tiff(string,res = 300,width = 2550, height = 3300)
-ggarrange(
-  annotate_figure(ggarrange(a,g,
-            labels = c("A","B"),ncol = 2,common.legend = TRUE, legend="top"),fig.lab = "Modifier: Age",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
-  annotate_figure(ggarrange(c,i,
-            labels = c("C","D"),ncol = 2,common.legend = TRUE, legend="top"),fig.lab = "Modifier: Gender",fig.lab.size = 14, fig.lab.face = "bold"),
-    annotate_figure(ggarrange(b,h,
-            labels = c("E","F"),ncol = 2,common.legend = TRUE, legend="top"),fig.lab = "Modifier: Race/ethnicity",fig.lab.size = 14, fig.lab.face="bold"),
+tiff(string,res = 300,height = 2550, width = 3300)
+ggarrange( 
+  ggarrange(
+  ggarrange(a,g,
+            labels = c("A","B"),ncol = 2,common.legend = TRUE, legend="top",font.label = list(size = 12,face="bold")),
+  ggarrange(c,i,
+            labels = c("C","D"),ncol = 2,common.legend = TRUE, legend="top",font.label = list(size = 12,face="bold")), ncol = 2),
+  ggarrange(
+    ggarrange(b,h,
+              labels = c("E","F"),ncol = 2,common.legend = TRUE, legend="top",font.label = list(size=11)),
+    ggarrange(d,j,
+              labels = c("G","H"),ncol = 2, common.legend = TRUE, legend="top",font.label = list(size = 12,face="bold")),
+  ncol = 2),
+  ggarrange(
+    ggarrange(e,k,
+              labels = c("I","J"),ncol = 2, common.legend = TRUE, legend="top",font.label = list(size = 12,face="bold")),
+  ggarrange(f,l,
+            labels = c("K","L"),ncol = 2, common.legend = TRUE, legend="top",font.label = list(size = 12, face = "bold")),
+  ncol = 2),
   nrow = 3)
 dev.off()
 ```
@@ -413,14 +424,7 @@ executive_function_table
 #saving one big composite figure
 string<-paste0(here("Figure2_ggarange.tiff"))
 tiff(string,res = 300,width = 2550, height = 3300)
-ggarrange(
-  annotate_figure(ggarrange(d,j,
-            labels = c("G","H"),ncol = 2, common.legend = TRUE, legend="top"),fig.lab = "Modifier: Educational attainment (in years)",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
-  annotate_figure(ggarrange(e,k,
-            labels = c("I","J"),ncol = 2, common.legend = TRUE, legend="top"),fig.lab ="Modifier: Family history of dementia",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
-  annotate_figure(ggarrange(f,l,
-            labels = c("K","L"),ncol = 2, common.legend = TRUE, legend="top"),fig.lab ="Modifier: Depressive symptoms",fig.lab.pos = "top.left",fig.lab.size = 14,fig.lab.face = "bold"),
-  nrow = 3)
+
 dev.off()
 ```
 
@@ -505,17 +509,6 @@ As discussed with Maria Glymour, one potential limitation of our current analyti
 ## Stepwise feature selection selection
 We discussed that we want just a theory-drven analysis for now.
 
-## Other verifications
-Checking if we should keep Language, because it is possibly redundant with ethinicity
-```{r}
-table(raw_data_averages$language,raw_data_averages$race, useNA = "ifany")
-```
-
-##removing the knot
-```{r ,echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, cache=FALSE}
-
-source(here('plotting_NO_knot.R'))
-```
 
 ```{r, eval=FALSE, echo=FALSE}
 
@@ -570,70 +563,5 @@ e
 f
 ```
 
-# Should we binarize ?
-
-If so where to choose the cut-off ?
-If we count the % of the population that reports at least 1 item rated as systematically much worse, we get 12.5% which is about what is reported by the CDC paper from Taylor et al.
-The plot bellow shows the percentage of the participants that rated severity of change between 1=no change to 4 systematically worse. The x axis is the number of item rated to a given level of severity. for example: 25% of participants rated at least 2 items to be "systematically a little worse", or 6 items to be "sometimes worse". ect.
-```{r, eval=F}
-EcogSeverity
-tiff(here("ECog_scores.tiff"),res = 400,width = 2400,height = 1600)
-ggarrange(EcogSeverity,ncol = 1)
-dev.off()
-```
 
 
-
-
-```{r}
-require(ggpubr)
-a <- FigureList[[13]]
-b <- FigureList[[14]]
-c <- FigureList[[15]]
-d <- FigureList[[16]]
-e <- FigureList[[17]]
-f <- FigureList[[18]]
-#saving one big composite figure
-string<-paste0("./Figure3_ggarange.tiff")
-tiff(string,res = 300,width = 2550, height = 3300)
-ggarrange(
-  ggarrange(a,b,
-            labels = c("a","b"),ncol = 2),
-  ggarrange(c,d,
-            labels = c("c","d"),ncol = 2),
-  ggarrange(e,f,
-            labels = c("e","f"),ncol = 2),
-  nrow = 3)
-dev.off()
-```
-
-```{r, include=F, message=F}
-tiff("./Figure3a.tiff",res = 400,width = 2400,height = 1600)
-ggarrange(a,ncol = 1)
-dev.off()
-tiff("./Figure3b.tiff",res = 400,width = 2400,height = 1600)
-ggarrange(b,ncol = 1)
-dev.off()
-tiff("./Figure3c.tiff",res = 400,width = 2400,height = 1600)
-ggarrange(c,ncol = 1)
-dev.off()
-tiff("./Figure3d.tiff",res = 400,width = 2400,height = 1600)
-ggarrange(d,ncol = 1)
-dev.off()
-tiff("./Figure3e.tiff",res = 400,width = 2400,height = 1600)
-ggarrange(e,ncol = 1)
-dev.off()
-tiff("./Figure3f.tiff",res = 400,width = 2400,height = 1600)
-ggarrange(f,ncol = 1)
-dev.off()
-```
-
-
-```{r, fig.show="hold", out.width="50%",cache=FALSE, eval=T}
-a
-b
-c
-d
-e
-f
-```

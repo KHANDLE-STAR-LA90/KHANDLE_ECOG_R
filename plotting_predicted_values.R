@@ -107,7 +107,7 @@ predggdpr <- predict.lm(results_execfun[[6]],
 #setting ploting parameters
 
 plots_list<-list()
-textSize <- 12
+textSize <- 11
 PM<- margin(.2, 0.2, .8, .5, "cm")
 limin <- 0
 limax <- 0.6
@@ -142,7 +142,7 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
         legend.text=element_text(size=textSize),
         legend.text.align=1,
         text = element_text(size = textSize),
-        plot.margin = margin(.5, .2, .8, .5, "cm"))+
+        plot.margin = PM)+
   scale_color_discrete(name="Age (years)", 
                        labels = c("85","75","65"))+
   scale_linetype_discrete(name="Age (years)", 
@@ -153,7 +153,7 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
-
+#plot.margin = margin(.5, .2, .8, .5, "cm")
 FigureList[[1]]<-Ba_mem
 
 #race/ethnicity
@@ -247,7 +247,7 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
         legend.text.align=0,
         legend.title.align=1,
         text = element_text(size = textSize),
-        plot.margin = margin(.5, .2, .8, .5, "cm"))+
+        plot.margin = PM)+
   scale_color_discrete(labels = c("8 ","12 ","16 "))+
   scale_linetype_discrete(labels = c("8 ","12 ","16 "))+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
@@ -312,7 +312,7 @@ Dpr_mem <- ggplot(data = newDFdepr)+
         legend.text.align=0,
         legend.title.align=0,
         text = element_text(size = textSize),
-        plot.margin = margin(0.2,0.2,0.2,0.5,"cm"))+
+        plot.margin = PM)+
   scale_linetype_discrete(name="Depressive symptoms")+
   scale_color_discrete(name="Depressive symptoms")+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
@@ -347,16 +347,18 @@ Ba <- ggplot(data = newDFage[range,])+
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
-  theme(legend.justification=c(0.5,0), 
+  theme(legend.justification=c(0,0), 
         legend.position="top",#c(0.95,0.6),
-        legend.title = element_blank(),
         legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
         legend.text.align=1,
+        legend.title = element_text(size = textSize,face = "bold"),
         text = element_text(size = textSize),
-        plot.margin = margin(.5, 0.2, .8, .5, "cm"))+
-  scale_color_discrete(labels = c("85","75","65"))+
-  scale_linetype_discrete(labels = c("85","75","65"))+
+        plot.margin = PM)+
+  scale_color_discrete(name="Modifier: Age",
+    labels = c("85","75","65"))+
+  scale_linetype_discrete(name="Modifier: Age",
+    labels = c("85","75","65"))+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
@@ -376,16 +378,18 @@ Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
-  theme(legend.justification=c(0.85,0), 
+  theme(legend.justification=c(0,0), 
         legend.position="top",#c(.95,0.55),
-        legend.title = element_blank(),
-        legend.spacing = unit(.5, 'cm'),
+        legend.title = element_text(size = 11,face = "bold"),
+        legend.spacing = unit(.1, 'cm'),
         legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
         legend.text.align=0,
-        legend.title.align=1,
+        legend.title.align=0,
         text = element_text(size = textSize),
-        plot.margin = PM)+
+        plot.margin = PM,legend.key.width = unit(.3,'cm'))+
+  scale_color_discrete(name="Modifier: Race/Ethnicity")+
+  scale_linetype_discrete(name="Modifier: Race/Ethnicity")+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
@@ -411,17 +415,19 @@ Ge<-ggplot(data = newDFgender)+
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
-  theme(legend.justification=c(0.5,0), 
+  theme(legend.justification=c(0,0), 
         legend.position="top",#c(0.95,0.60),
         legend.spacing = unit(.1,"cm"),
         legend.direction = "horizontal",
-        legend.title = element_blank(),
         legend.text=element_text(size=textSize),
         legend.title.align=0,
+        legend.title = element_text(size = textSize,face = "bold"),
         text = element_text(size = textSize),
         plot.margin = PM)+
-  scale_linetype_discrete(labels=c("Women","Men"))+
-  scale_color_discrete(labels=c("Women","Men"))+
+  scale_linetype_discrete(name="Modifier: Gender",
+    labels=c("Women","Men"))+
+  scale_color_discrete(name="Modifier: Gender",
+    labels=c("Women","Men"))+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
@@ -443,18 +449,18 @@ Ed <- ggplot(data = newDFedu[range,])+
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab("Executive function")+
-  theme(legend.justification=c(0.8,0), 
+  theme(legend.justification=c(0,0), 
         legend.position="top",#c(.95,0.6),
         legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
-        legend.title = element_blank(),
         legend.text.align=0,
         legend.title.align=1,
+        legend.title = element_text(size = textSize,face = "bold"),
         text = element_text(size = textSize),
-        plot.margin = margin(.2, 0.2, .8, .5, "cm"))+
-  scale_color_discrete( 
+        plot.margin = PM)+
+  scale_color_discrete(name="Modifier: Educational attainment (in years)",
                        labels = c("8 ","12 ","16 "))+
-  scale_linetype_discrete( 
+  scale_linetype_discrete(name="Modifier: Educational attainment (in years)", 
                           labels = c("8 ","12 ","16 "))+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
@@ -477,18 +483,17 @@ Fh <- ggplot(data = newDFfhist)+
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
-  theme(legend.justification=c(0.75,0), 
+  theme(legend.justification=c(0,0), 
         legend.position="top",#c(0.95,.6),
         legend.direction = "horizontal",
         legend.spacing = unit(0.2,"cm"),
         legend.text=element_text(size=textSize),
-        legend.title = element_blank(),
         legend.title.align=0,
+        legend.title = element_text(size = textSize,face = "bold"),
         text = element_text(size = textSize),
         plot.margin = PM)+
-  scale_color_discrete( 
-                       labels = c("yes","no"))+
-  scale_linetype_discrete( 
+  scale_color_discrete(name="Modifier: Familly history of dementia",labels = c("yes","no"))+
+  scale_linetype_discrete(name="Modifier: Familly history of dementia",
                           labels = c("yes","no"))+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
@@ -510,20 +515,20 @@ Dpr <- ggplot(data = newDFdepr[1:20,])+
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
-  theme(legend.justification=c(.85,0), 
+  theme(legend.justification=c(0,0), 
         legend.position="top",#c(0.95,0.6),
         legend.direction = "horizontal",
         legend.text=element_text(size=textSize),
-        legend.title = element_text(size = textSize),
         legend.text.align=0,
         legend.title.align=0,
+        legend.title = element_text(size = textSize,face = "bold"),
         text = element_text(size = textSize),
-        plot.margin = margin(t= .2, r= .2, b= .2, l= .5,"cm"))+
-  scale_linetype_discrete(name="Standardized scores")+
-  scale_color_discrete(name="Standardized scores")+
+        plot.margin = PM)+
+  scale_linetype_discrete(name="Modifier: Depressive symptoms")+
+  scale_color_discrete(name="Modifier: Depressive symptoms")+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-
+#        legend.title = element_text(size = textSize,face = "bold"),
 FigureList[[12]]<-Dpr
 
