@@ -107,6 +107,7 @@ predggdpr <- predict.lm(results_execfun[[6]],
 #setting ploting parameters
 
 plots_list<-list()
+BW<- 0 #Black&Withe version for printing (set to 0 for color)
 textSize <- 11
 PM<- margin(.2, 0.2, .8, .5, "cm")
 limin <- 0
@@ -153,6 +154,9 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
+if (BW==1) {
+  Ba_mem <- Ba_mem + scale_color_grey(start = 0, end = .8) + scale_fill_grey(start = 0, end = .8)
+}
 #plot.margin = margin(.5, .2, .8, .5, "cm")
 FigureList[[1]]<-Ba_mem
 
@@ -184,7 +188,9 @@ Ra_mem<-ggplot(data = newDFrace)+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
-
+if (BW==1) {
+  Ra_mem <- Ra_mem + scale_color_grey(start = 0, end = .8) + scale_fill_grey(start = 0, end = .9)
+}
 
 FigureList[[2]]<- Ra_mem
 
@@ -221,7 +227,9 @@ Ge_mem<-ggplot(data = newDFgender)+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
-
+if (BW==1) {
+  Ge_mem <- Ge_mem + scale_color_grey(start = 0, end = .8) + scale_fill_grey(start = 0, end = .8)
+}
 FigureList[[3]]<-Ge_mem
 
 #education duration
@@ -255,7 +263,9 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
-
+if (BW==1) {
+  Ed_mem <- Ed_mem + scale_color_grey(start = 0, end = .8) + scale_fill_grey(start = 0, end = .8)
+}
 FigureList[[4]]<-Ed_mem
 
 #Family history of dementia
@@ -288,6 +298,9 @@ Fh_mem <- ggplot(data = newDFfhist)+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
+if (BW==1) {
+  Fh_mem <- Fh_mem + scale_color_grey(start = 0, end = .8) + scale_fill_grey(start = 0, end = .8)
+}
 
 FigureList[[5]]<-Fh_mem
 
@@ -320,6 +333,9 @@ Dpr_mem <- ggplot(data = newDFdepr)+
   guides(fill = FALSE,
          linetype=FALSE,
          color=FALSE)
+if (BW==1) {
+  Dpr_mem <- Dpr_mem + scale_color_grey(start = 0, end = .8) + scale_fill_grey(start = 0, end = .8)
+}
 
 FigureList[[6]]<-Dpr_mem
 
@@ -362,7 +378,13 @@ Ba <- ggplot(data = newDFage[range,])+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-Ba
+
+if (BW==1) {
+  Ba <- Ba + scale_color_grey(name="Modifier: Age",
+                              labels = c("85","75","65"),start = 0, end = .9) + scale_fill_grey(name="Modifier: Age",start = 0, end = .9)+coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
+                                                                                                                                                          default = FALSE, clip = "on")
+}
+
 FigureList[[7]]<-Ba
 
 #race/ethnicity
@@ -387,13 +409,17 @@ Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
         legend.text.align=0,
         legend.title.align=0,
         text = element_text(size = textSize),
-        plot.margin = PM,legend.key.width = unit(.3,'cm'))+
+        plot.margin = PM,legend.key.width = unit(.35,'cm'))+
   scale_color_discrete(name="Modifier: Race/Ethnicity")+
   scale_linetype_discrete(name="Modifier: Race/Ethnicity")+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 
+if (BW==1) {
+  Ra <- Ra + scale_color_grey(name="Modifier: Race/Ethnicity",start = 0, end = .90) + scale_fill_grey(start = 0, end = .90) +
+    scale_linetype_discrete(name="Modifier: Race/Ethnicity")+ guides(fill = FALSE)
+}
 
 FigureList[[8]]<- Ra
 
@@ -432,6 +458,11 @@ Ge<-ggplot(data = newDFgender)+
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 
+if (BW==1) {
+  Ge <- Ge + scale_color_grey(name="Modifier: Gender",
+                              labels=c("Women","Men"),start = 0, end = .7) + scale_fill_grey(name="Modifier: Gender",start = 0, end = .7)
+}
+
 FigureList[[9]]<-Ge
 
 #education duration
@@ -465,7 +496,12 @@ Ed <- ggplot(data = newDFedu[range,])+
   coord_cartesian(xlim = xlim, ylim = c(limin,limax), expand = FALSE,
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
-Ed
+
+if (BW==1) {
+  Ed <- Ed + scale_color_grey(name="Modifier: Educational attainment (in years)",
+                              labels = c("8 ","12 ","16 "),start = 0, end = .8) + scale_fill_grey(name="Modifier: Educational attainment (in years)",
+                                                                                                  labels = c("8 ","12 ","16 "),start = 0, end = .8)
+}
 FigureList[[10]]<-Ed
 
 #Family history of dementia
@@ -499,6 +535,9 @@ Fh <- ggplot(data = newDFfhist)+
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 
+if (BW==1) {
+  Fh <- Fh + scale_color_grey(name="Modifier: Familly history of dementia",labels = c("yes","no"),start = 0, end = .7) + scale_fill_grey(name="Modifier: Familly history of dementia",labels = c("yes","no"),start = 0, end = .7)
+}
 FigureList[[11]]<-Fh
 
 #depressive symptoms
@@ -530,5 +569,8 @@ Dpr <- ggplot(data = newDFdepr[1:20,])+
                   default = FALSE, clip = "on")+
   guides(fill = FALSE)
 #        legend.title = element_text(size = textSize,face = "bold"),
+if (BW==1) {
+  Dpr <- Dpr + scale_color_grey(name="Modifier: Depressive symptoms",start = 0, end = .8) + scale_fill_grey(name="Modifier: Depressive symptoms",start = 0, end = .8)
+}
 FigureList[[12]]<-Dpr
 
