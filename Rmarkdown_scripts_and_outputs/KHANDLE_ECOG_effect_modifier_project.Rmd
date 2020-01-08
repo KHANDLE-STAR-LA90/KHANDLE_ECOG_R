@@ -371,9 +371,9 @@ l <- FigureList[[12]]
 
 ```{r}
 
-string<-here("Figure1_Color_600dpi.tiff")
+string<-here("Figure1_Color_1800dpi.png")
 
-tiff(string,res = 600,height = 5100, width = 6600)
+png(string,res = 1800,height = 15300, width = 19800, type='cairo')
 ggarrange( 
   ggarrange(
   ggarrange(a,g,
