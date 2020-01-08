@@ -115,6 +115,7 @@ limax <- 0.6
 xlim<-c(-2,2)
 xlab="Episodic memory"
 xmarks <- scale_x_continuous(breaks=seq(-2,2,0.5))
+thick <- 0.6
 
 #plots for episodic memory
 #base model with age only
@@ -132,7 +133,7 @@ Ba_mem <- ggplot(data = newDFageM[1:20,])+
                              levels = c(1,0,-1)),
                 linetype=factor(AGE_75_d,
                                 levels = c(1,0,-1))),
-            size=1)+ 
+            size=thick)+ 
   #theme_()+
   ylab("Predicted log(ECog)")+
   xlab(xlab)+
@@ -169,7 +170,7 @@ Ra_mem<-ggplot(data = newDFrace)+
   geom_line(aes(xre,predggra_mem[,1],
                 color=race,
                 linetype=race),
-            size=1)+ 
+            size=thick)+ 
   theme_classic2()+
   ylab("Predicted log(ECog)")+
   xlab(xlab)+
@@ -208,7 +209,7 @@ Ge_mem<-ggplot(data = newDFgender)+
         predggge_mem[,1],
         color=factor(GENDER,levels = c("Woman","Man")),
         linetype=factor(GENDER,levels = c("Woman","Man"))),
-    size=1)+ 
+    size=thick)+ 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab(xlab)+
@@ -243,7 +244,7 @@ Ed_mem <- ggplot(data = newDFeduM[range,])+
   geom_line(aes(xed[range],fit,
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
-            size=1) + 
+            size=thick) + 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
@@ -279,7 +280,7 @@ Fh_mem <- ggplot(data = newDFfhist)+
                              levels = c(1,0)),
                 linetype=factor(F_Hist,
                                 levels = c(1,0))),
-            size=1) + 
+            size=thick) + 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
@@ -313,7 +314,7 @@ Dpr_mem <- ggplot(data = newDFdepr)+
   geom_line(aes(xdpr,predggdpr_mem[,1],
                 color=factor(depression_01,levels = c(1,0,-1)),
                 linetype=factor(depression_01,levels = c(1,0,-1))),
-            size=1) + 
+            size=thick) + 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
@@ -359,7 +360,7 @@ Ba <- ggplot(data = newDFage[range,])+
                              levels = c(1,0,-1)),
                 linetype=factor(AGE_75_d,
                                 levels = c(1,0,-1))),
-            size=1)+ 
+            size=thick)+ 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
@@ -396,7 +397,7 @@ Ra<-ggplot(data = newDFrace[-c(14,21,28),])+
   geom_line(aes(ex_function,fit,
                 color=race,
                 linetype=race),
-            size=1)+ 
+            size=thick)+ 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
@@ -437,7 +438,7 @@ Ge<-ggplot(data = newDFgender)+
         predggge[,1],
         color=factor(GENDER,levels = c("Woman","Man")),
         linetype=factor(GENDER,levels = c("Woman","Man"))),
-    size=1)+ 
+    size=thick)+ 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)")+
   xlab("Executive function")+
@@ -476,7 +477,7 @@ Ed <- ggplot(data = newDFedu[range,])+
   geom_line(aes(ex_function,fit,
                 color=factor(yrEDU),
                 linetype=factor(yrEDU)),
-            size=1) + 
+            size=thick) + 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab("Executive function")+
@@ -515,7 +516,7 @@ Fh <- ggplot(data = newDFfhist)+
                              levels = c(1,0)),
                 linetype=factor(F_Hist,
                                 levels = c(1,0))),
-            size=1) + 
+            size=thick) + 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
@@ -550,7 +551,7 @@ Dpr <- ggplot(data = newDFdepr[1:20,])+
   geom_line(aes(ex_function,fit,
                 color=factor(depression_01,levels = c(1,0,-1)),
                 linetype=factor(depression_01,levels = c(1,0,-1))),
-            size=1) + 
+            size=thick) + 
   theme_classic2()+xmarks+
   ylab("Predicted log(ECog)") + 
   xlab(xlab)+
