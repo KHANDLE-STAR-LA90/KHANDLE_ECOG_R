@@ -300,9 +300,10 @@ raw_data_averages$Ecog12_missing <- DF$Ecog12_missing
 ################################################################################
 
 #creating a log-transformed ECog12
+DF$Ecog<-DF$Ecog12_including_partial_averages
 DF$logEcog12 <- log(DF$Ecog12_including_partial_averages)
 #DF$logEcog12 <- ifelse(DF$logEcog12=="NaN",NA,DF$logEcog12)
-raw_data_averages$logEcog12 <- log(raw_data_averages$Ecog12_including_partial_averages)
+raw_data_averages$logEcog12 <- log(raw_data_averages$Ecog12_including_partial_averages) 
 
 #creating a centered age and a centered age in decades(because effect sizes for 1 year are too small)
 raw_data_averages$Age_centered_75 <- scale(raw_data_averages$age,center = 75, scale = FALSE)
@@ -351,38 +352,45 @@ DF<-DF[-which(is.na(DF$depression_01)),]
  Tbl_bin$Edu_bin <- factor(Edu_bin)
  Tbl_bin$Depressive_Smpt_bin<-factor(Depressive_Smpt_bin)
  Tbl_bin$fam_hist_bin <- factor(fam_hist_bin)
- Tbl_bin$logEcog<-DF$logEcog12
+ Tbl_bin$Ecog<-DF$Ecog  ##### I cheated here to take the non-transformed ECog instead of the log
  
- colnames(Tbl_bin)<-c("Episodic memory","Executive function","Age","Gender","Race/Ethnicity","Educational attainment", "Depressive_symptoms","Family_history","logEcog")
+ colnames(Tbl_bin)<-c("Episodic memory","Executive function","Age","Gender","Race/Ethnicity","Educational attainment", "Depressive_symptoms","Family_history","Ecog")
  
  TblEcog <- list()
  for(n in dput(names(Tbl_bin))){
-   TblEcog[[n]] <- CreateTableOne(vars= c("logEcog"),strata = n,data = Tbl_bin,test = F )
+   TblEcog[[n]] <- CreateContTable(vars= c("Ecog"),strata = n,data = Tbl_bin,test = F,funcNames = c("n",
+                                                                                                    "mean", "sd", "median",
+                                                                                                    "p25", "p75",
+                                                                                                    "min", "max",
+                                                                                                    "skew", "kurt") )
  }
- saveRDS(TblEcog,file = here("Ecog_table.rds"))
+# print(TblEcog,nonnormal = "Ecog",minMax = TRUE)
+# saveRDS(TblEcog,file = here("Ecog_table_raw_scores.rds"))
 
  # ECOG_vales <- readRDS(file = "../KHANDLE_PROTECTED_DATA_RESULTS_ERM/Ecog_table.rds")
  # 
- # Table_Ecog <- data.frame()
- # 
- # EM <- unlist(ECOG_vales[[1]]$ContTable)
- # EF <- unlist(ECOG_vales[[2]]$ContTable)
- # Age <- unlist(ECOG_vales[[3]]$ContTable)
- # Gen <- unlist(ECOG_vales[[4]]$ContTable)
- # race <-unlist(ECOG_vales[[5]]$ContTable)
- # edu<- unlist(ECOG_vales[[6]]$ContTable)
- # Dep <- unlist(ECOG_vales[[7]]$ContTable)
- # Fam <- unlist(ECOG_vales[[8]]$ContTable)
- # 
- # 
- # Table_Ecog_Episodic_mem <- matrix(EM,ncol = 12,byrow = T)    
- # Table_Ecog_Executive_fun <- matrix(EF,ncol = 12,byrow = T)
- # Table_Ecog_age <- matrix(Age,ncol = 12,byrow = T)
- # Table_Ecog_gender <- matrix(Gen,ncol = 12,byrow = T)
- # Table_Ecog_race <- matrix(race,ncol = 12,byrow = T)
- # Table_Ecog_edu <- matrix(edu,ncol = 12,byrow = T)
- # Table_Ecog_depr <- matrix(Dep,ncol = 12,byrow = T)
- # Table_Ecog_FamH <- matrix(Fam,ncol = 12,byrow = T)
- # 
- # Table_Ecog <- rbind(Table_Ecog_Episodic_mem,Table_Ecog_Executive_fun,Table_Ecog_age,Table_Ecog_gender,Table_Ecog_race,Table_Ecog_edu,Table_Ecog_depr, Table_Ecog_FamH)
- # 
+ Table_Ecog <- data.frame()
+
+ EM <- unlist(TblEcog[[1]])
+ 
+ EF <- unlist(TblEcog[[2]])
+ Age <- unlist(TblEcog[[3]])
+ Gen <- unlist(TblEcog[[4]])
+ race <-unlist(TblEcog[[5]])
+ edu<- unlist(TblEcog[[6]])
+ Dep <- unlist(TblEcog[[7]])
+ Fam <- unlist(TblEcog[[8]])
+
+
+ Table_Ecog_Episodic_mem <- matrix(EM,ncol = 10,byrow = T)
+ Table_Ecog_Executive_fun <- matrix(EF,ncol = 10,byrow = T)
+ Table_Ecog_age <- matrix(Age,ncol = 10,byrow = T)
+ Table_Ecog_gender <- matrix(Gen,ncol = 10,byrow = T)
+ Table_Ecog_race <- matrix(race,ncol = 10,byrow = T)
+ Table_Ecog_edu <- matrix(edu,ncol = 10,byrow = T)
+ Table_Ecog_depr <- matrix(Dep,ncol = 10,byrow = T)
+ Table_Ecog_FamH <- matrix(Fam,ncol = 10,byrow = T)
+
+ 
+ Table_Ecog <- rbind(Table_Ecog_Episodic_mem,Table_Ecog_Executive_fun,Table_Ecog_age,Table_Ecog_gender,Table_Ecog_race,Table_Ecog_edu,Table_Ecog_depr, Table_Ecog_FamH)
+colnames(Table_Ecog)<-c("n", "mean", "SD",	"median",	"p25",	"p75",	"min",	"max",	"skew",	"kurt")
